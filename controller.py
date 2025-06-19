@@ -5,6 +5,7 @@ from japanpost_backend.diff_applier import (
 )
 from japanpost_backend.reapply_patch import reapply_log_entry
 from japanpost_backend.db_manager import get_all, clear_all, count_records
+from japanpost_backend.db_manager import update_custom
 from japanpost_backend.search_manager import search_with_filters
 from japanpost_backend.log_manager import get_logs, delete_log
 from japanpost_backend.reverse_patch import reverse_log_entry
@@ -79,4 +80,11 @@ class Controller:
         for idx in sorted(indices):
             msgs.append(reapply_log_entry(idx))
         return "\n".join(msgs)
+
+    # --- custom field handling ---
+    def update_custom_fields(self, zipcodes, custom):
+        """Apply the same custom dict to multiple records."""
+        for zc in zipcodes:
+            update_custom(zc, custom)
+        return f"[OK] カスタム項目を更新しました ({len(zipcodes)} 件)"
 

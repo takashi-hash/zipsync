@@ -1,7 +1,7 @@
 import sys
 from PySide6.QtWidgets import (
     QMainWindow, QWidget, QListWidget, QStackedWidget, QTextEdit, QLabel,
-    QHBoxLayout, QVBoxLayout, QMessageBox, QToolButton
+    QHBoxLayout, QVBoxLayout, QMessageBox, QToolButton, QDialog
 )
 from PySide6.QtCore import Qt, QObject, Signal
 from PySide6.QtGui import QStandardItem, QStandardItemModel
@@ -13,6 +13,7 @@ from views.register_page import RegisterPage
 from views.clear_page import ClearPage
 from views.search_page import SearchPage
 from views.logs_page import LogsPage
+from views.custom_dialog import CustomEditDialog
 
 
 class EmittingStream(QObject):
@@ -72,6 +73,7 @@ class MainWindow(QMainWindow):
         self.search_page.search_btn.clicked.connect(lambda: self.perform_search(1))
         self.search_page.prev_btn.clicked.connect(self.prev_page)
         self.search_page.next_btn.clicked.connect(self.next_page)
+        self.search_page.add_custom_btn.clicked.connect(self.add_custom_fields)
         self.logs_page.restore_btn.clicked.connect(self.restore_selected_logs)
         self.logs_page.delete_log_btn.clicked.connect(self.delete_selected_logs)
         self.logs_page.reapply_btn.clicked.connect(self.reapply_selected_logs)
@@ -207,10 +209,14 @@ class MainWindow(QMainWindow):
 
         self.search_page.model.removeRows(0, self.search_page.model.rowCount())
         for zipcode, pref, city, town in records:
-            items = [QStandardItem(x) for x in [zipcode, pref, city, town]]
-            for item in items:
+            check_item = QStandardItem()
+            check_item.setCheckable(True)
+            check_item.setEditable(False)
+            row_items = [check_item] + [QStandardItem(x) for x in [zipcode, pref, city, town]]
+            for item in row_items[1:]:
                 item.setEditable(False)
-            self.search_page.model.appendRow(items)
+            self.search_page.model.appendRow(row_items)
+        self.search_page._update_button_state()
 
         if total == 0:
             self.search_page.no_results_label.setText("検索結果は0件です")
@@ -231,6 +237,24 @@ class MainWindow(QMainWindow):
     def next_page(self):
         if self.current_page < self.total_pages:
             self.perform_search(self.current_page + 1)
+
+    def add_custom_fields(self):
+        selected = self.search_page.selected_zipcodes()
+        if not selected:
+            return
+        dlg = CustomEditDialog(self)
+        if dlg.exec() == QDialog.Accepted:
+            data = dlg.get_data()
+            reply = QMessageBox.question(
+                self,
+                "確認",
+                f"{len(selected)} 件のレコードに適用しますか？",
+                QMessageBox.Yes | QMessageBox.No,
+            )
+            if reply == QMessageBox.Yes:
+                msg = self.controller.update_custom_fields(selected, data)
+                self.output.append(msg)
+                self.perform_search(self.current_page)
 
     # --- log page related ---
     def load_logs_page(self, page: int = 1):

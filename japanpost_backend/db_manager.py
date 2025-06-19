@@ -37,6 +37,12 @@ def get_all() -> List[Dict]:
     return db.all()
 
 
+def get_by_zipcode(zipcode: str) -> Dict:
+    """Return first record matching the zip code or None."""
+    result = db.search(Address.zipcode == zipcode)
+    return result[0] if result else None
+
+
 def count_records() -> int:
     """Return the number of address records."""
     return len(db)

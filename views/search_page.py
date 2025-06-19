@@ -34,12 +34,17 @@ class SearchPage(QWidget):
         self.table = QTableView()
         layout.addWidget(self.table, 1)
 
+        self.add_custom_btn = QPushButton("項目を追加")
+        self.add_custom_btn.setEnabled(False)
+        layout.addWidget(self.add_custom_btn)
+
         self.no_results_label = QLabel("")
         layout.addWidget(self.no_results_label)
 
-        self.model = QStandardItemModel(0, 4)
-        self.model.setHorizontalHeaderLabels(["郵便番号", "都道府県", "市区町村", "町域"])
+        self.model = QStandardItemModel(0, 5)
+        self.model.setHorizontalHeaderLabels(["選択", "郵便番号", "都道府県", "市区町村", "町域"])
         self.table.setModel(self.model)
+        self.model.itemChanged.connect(self._update_button_state)
 
         pager = QHBoxLayout()
         self.prev_btn = QPushButton("前へ")
@@ -52,3 +57,20 @@ class SearchPage(QWidget):
 
         self.current_page = 1
         self.total_pages = 1
+
+    def _update_button_state(self, *args):
+        selected = False
+        for row in range(self.model.rowCount()):
+            item = self.model.item(row, 0)
+            if item.checkState() == Qt.Checked:
+                selected = True
+                break
+        self.add_custom_btn.setEnabled(selected)
+
+    def selected_zipcodes(self):
+        zips = []
+        for row in range(self.model.rowCount()):
+            item = self.model.item(row, 0)
+            if item.checkState() == Qt.Checked:
+                zips.append(self.model.item(row, 1).text())
+        return zips
