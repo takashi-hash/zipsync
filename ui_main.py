@@ -1,16 +1,28 @@
+import sys
 from PySide6.QtWidgets import (
     QMainWindow, QWidget, QListWidget, QStackedWidget, QTableView,
     QHBoxLayout, QVBoxLayout, QLineEdit, QPushButton, QTextEdit, QLabel,
     QMessageBox
 )
 from controller import Controller
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QObject, Signal
 from PySide6.QtGui import (
     QStandardItemModel,
     QStandardItem,
     QRegularExpressionValidator,
 )
 from PySide6.QtCore import QRegularExpression
+
+
+class EmittingStream(QObject):
+    """Redirect writes to a Qt signal."""
+    text_written = Signal(str)
+
+    def write(self, text):
+        self.text_written.emit(str(text))
+
+    def flush(self):
+        pass
 
 
 class MainWindow(QMainWindow):
@@ -57,7 +69,17 @@ class MainWindow(QMainWindow):
         central.setLayout(layout)
         self.setCentralWidget(central)
 
+        # --- コンソール出力をGUIへリダイレクト ---
+        self._stream = EmittingStream()
+        self._stream.text_written.connect(self._append_output)
+        sys.stdout = self._stream
+        sys.stderr = self._stream
+
         self.menu.setCurrentRow(0)
+
+    def _append_output(self, text: str):
+        if text.strip():
+            self.output.append(text.rstrip())
 
     def create_page(self, label_text, btn_text, slot):
         page = QWidget()
