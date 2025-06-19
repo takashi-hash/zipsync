@@ -1,17 +1,18 @@
 import sys
 from PySide6.QtWidgets import (
-    QMainWindow, QWidget, QListWidget, QStackedWidget, QTableView,
-    QHBoxLayout, QVBoxLayout, QLineEdit, QPushButton, QTextEdit, QLabel,
-    QMessageBox
+    QMainWindow, QWidget, QListWidget, QStackedWidget, QTextEdit, QLabel,
+    QHBoxLayout, QVBoxLayout, QMessageBox
 )
-from controller import Controller
 from PySide6.QtCore import Qt, QObject, Signal
-from PySide6.QtGui import (
-    QStandardItemModel,
-    QStandardItem,
-    QRegularExpressionValidator,
-)
+from PySide6.QtGui import QStandardItem, QStandardItemModel
+from PySide6.QtGui import QRegularExpressionValidator
 from PySide6.QtCore import QRegularExpression
+
+from controller import Controller
+from views.register_page import RegisterPage
+from views.clear_page import ClearPage
+from views.search_page import SearchPage
+from views.logs_page import LogsPage
 
 
 class EmittingStream(QObject):
@@ -39,15 +40,37 @@ class MainWindow(QMainWindow):
         self.menu.setFixedWidth(180)
         self.menu.currentRowChanged.connect(self.switch_page)
 
+        # 各ページを作成
+        self.bulk_page = RegisterPage("一括登録", "一括登録 実行")
+        self.add_page = RegisterPage("差分追加", "差分追加 実行")
+        self.del_page = RegisterPage("差分削除", "差分削除 実行")
+        self.clear_page = ClearPage()
+        self.search_page = SearchPage()
+        self.logs_page = LogsPage()
+
+        # ボタンに処理を接続
+        self.bulk_page.run_button.clicked.connect(
+            lambda: self.run_bulk(self.bulk_page.url_input.text()))
+        self.add_page.run_button.clicked.connect(
+            lambda: self.run_add(self.add_page.url_input.text()))
+        self.del_page.run_button.clicked.connect(
+            lambda: self.run_del(self.del_page.url_input.text()))
+        self.clear_page.run_button.clicked.connect(self.run_clear)
+        self.search_page.search_btn.clicked.connect(lambda: self.perform_search(1))
+        self.search_page.prev_btn.clicked.connect(self.prev_page)
+        self.search_page.next_btn.clicked.connect(self.next_page)
+        self.logs_page.restore_btn.clicked.connect(self.restore_selected_logs)
+        self.logs_page.delete_log_btn.clicked.connect(self.delete_selected_logs)
+        self.logs_page.prev_btn.clicked.connect(
+            lambda: self.load_logs_page(self.log_current_page - 1))
+        self.logs_page.next_btn.clicked.connect(
+            lambda: self.load_logs_page(self.log_current_page + 1))
+
         # ページ切替部
         self.stack = QStackedWidget()
-        self.stack.addWidget(self.create_page(
-            "一括登録", "一括登録 実行", self.run_bulk))
-        self.stack.addWidget(self.create_page("差分追加", "差分追加 実行", self.run_add))
-        self.stack.addWidget(self.create_page("差分削除", "差分削除 実行", self.run_del))
-        self.stack.addWidget(self.create_clear_page())
-        self.stack.addWidget(self.create_search_page())
-        self.stack.addWidget(self.create_logs_page())
+        for page in [self.bulk_page, self.add_page, self.del_page,
+                     self.clear_page, self.search_page, self.logs_page]:
+            self.stack.addWidget(page)
 
         # メイン領域
         container = QWidget()
@@ -82,117 +105,7 @@ class MainWindow(QMainWindow):
         if text.strip():
             self.output.append(text.rstrip())
 
-    def create_page(self, label_text, btn_text, slot):
-        page = QWidget()
-        v = QVBoxLayout(page)
-        v.addWidget(QLabel(label_text + "用 URL"))
-        url_input = QLineEdit()
-        setattr(self, label_text.replace("一括登録", "url_all")
-                .replace("差分追加", "url_add")
-                .replace("差分削除", "url_del"), url_input)
-        btn = QPushButton(btn_text)
-        btn.clicked.connect(lambda: slot(url_input.text()))
-        v.addWidget(url_input)
-        v.addWidget(btn)
-        v.addStretch()
-        return page
 
-    def create_clear_page(self):
-        page = QWidget()
-        v = QVBoxLayout(page)
-        v.addWidget(QLabel("登録データを全て削除"))
-        btn = QPushButton("全削除 実行")
-        btn.clicked.connect(self.run_clear)
-        v.addWidget(btn)
-        v.addStretch()
-        return page
-
-    def create_search_page(self):
-        page = QWidget()
-        v = QVBoxLayout(page)
-        v.addWidget(QLabel("詳細検索"))
-
-        form = QHBoxLayout()
-        self.zip_input = QLineEdit()
-        self.zip_input.setPlaceholderText("郵便番号")
-        self.zip_input.setMaxLength(7)
-        regex = QRegularExpression(r"\d{0,7}")
-        self.zip_input.setValidator(QRegularExpressionValidator(regex))
-        self.pref_input = QLineEdit()
-        self.pref_input.setPlaceholderText("都道府県")
-        self.city_input = QLineEdit()
-        self.city_input.setPlaceholderText("市区町村")
-        self.town_input = QLineEdit()
-        self.town_input.setPlaceholderText("町域")
-        self.search_btn = QPushButton("検索")
-        self.search_btn.clicked.connect(lambda: self.perform_search(1))
-        for w in [self.zip_input, self.pref_input, self.city_input,
-                  self.town_input, self.search_btn]:
-            form.addWidget(w)
-        v.addLayout(form)
-
-        self.table = QTableView()
-        v.addWidget(self.table, 1)
-
-        self.no_results_label = QLabel("")
-        v.addWidget(self.no_results_label)
-
-        self.model = QStandardItemModel(0, 4)
-        self.model.setHorizontalHeaderLabels(["郵便番号", "都道府県", "市区町村", "町域"])
-        self.table.setModel(self.model)
-
-        pager = QHBoxLayout()
-        self.prev_btn = QPushButton("前へ")
-        self.prev_btn.clicked.connect(self.prev_page)
-        self.next_btn = QPushButton("次へ")
-        self.next_btn.clicked.connect(self.next_page)
-        self.page_label = QLabel("1 / 1")
-        for w in [self.prev_btn, self.page_label, self.next_btn]:
-            pager.addWidget(w)
-        pager.addStretch()
-        v.addLayout(pager)
-
-        self.current_page = 1
-        self.total_pages = 1
-        return page
-
-    def create_logs_page(self):
-        page = QWidget()
-        v = QVBoxLayout(page)
-        v.addWidget(QLabel("差分取込履歴"))
-
-        self.logs_model = QStandardItemModel(0, 5)
-        self.logs_model.setHorizontalHeaderLabels([
-            "選択", "種別", "ファイル", "件数", "日時"
-        ])
-        self.logs_table = QTableView()
-        self.logs_table.setModel(self.logs_model)
-        v.addWidget(self.logs_table, 1)
-
-        actions = QHBoxLayout()
-        self.restore_btn = QPushButton("復元")
-        self.restore_btn.clicked.connect(self.restore_selected_logs)
-        self.delete_log_btn = QPushButton("履歴削除")
-        self.delete_log_btn.clicked.connect(self.delete_selected_logs)
-        for w in [self.restore_btn, self.delete_log_btn]:
-            actions.addWidget(w)
-        actions.addStretch()
-        v.addLayout(actions)
-
-        pager = QHBoxLayout()
-        self.log_prev_btn = QPushButton("前へ")
-        self.log_prev_btn.clicked.connect(lambda: self.load_logs_page(self.log_current_page - 1))
-        self.log_page_label = QLabel("1 / 1")
-        self.log_next_btn = QPushButton("次へ")
-        self.log_next_btn.clicked.connect(lambda: self.load_logs_page(self.log_current_page + 1))
-        for w in [self.log_prev_btn, self.log_page_label, self.log_next_btn]:
-            pager.addWidget(w)
-        pager.addStretch()
-        v.addLayout(pager)
-
-        self.log_current_page = 1
-        self.log_total_pages = 1
-        return page
 
     def switch_page(self, index):
         self.stack.setCurrentIndex(index)
@@ -239,30 +152,31 @@ class MainWindow(QMainWindow):
 
     # --- 検索関連処理 ---
     def perform_search(self, page: int = 1):
-        zipcode = self.zip_input.text().strip()
-        pref = self.pref_input.text().strip()
-        city = self.city_input.text().strip()
-        town = self.town_input.text().strip()
+        zipcode = self.search_page.zip_input.text().strip()
+        pref = self.search_page.pref_input.text().strip()
+        city = self.search_page.city_input.text().strip()
+        town = self.search_page.town_input.text().strip()
         records, total = self.controller.search_addresses(
             zipcode, pref, city, town, page, per_page=30)
 
-        self.model.removeRows(0, self.model.rowCount())
+        self.search_page.model.removeRows(0, self.search_page.model.rowCount())
         for zipcode, pref, city, town in records:
             items = [QStandardItem(x) for x in [zipcode, pref, city, town]]
             for item in items:
                 item.setEditable(False)
-            self.model.appendRow(items)
+            self.search_page.model.appendRow(items)
 
         if total == 0:
-            self.no_results_label.setText("検索結果は0件です")
+            self.search_page.no_results_label.setText("検索結果は0件です")
         else:
-            self.no_results_label.setText("")
+            self.search_page.no_results_label.setText("")
 
         self.current_page = page
         self.total_pages = max(1, (total + 29) // 30)
-        self.page_label.setText(f"{self.current_page} / {self.total_pages}")
-        self.prev_btn.setEnabled(self.current_page > 1)
-        self.next_btn.setEnabled(self.current_page < self.total_pages)
+        self.search_page.page_label.setText(
+            f"{self.current_page} / {self.total_pages}")
+        self.search_page.prev_btn.setEnabled(self.current_page > 1)
+        self.search_page.next_btn.setEnabled(self.current_page < self.total_pages)
 
     def prev_page(self):
         if self.current_page > 1:
@@ -276,7 +190,7 @@ class MainWindow(QMainWindow):
     def load_logs_page(self, page: int = 1):
         logs, total = self.controller.fetch_logs(page, per_page=30)
 
-        self.logs_model.removeRows(0, self.logs_model.rowCount())
+        self.logs_page.model.removeRows(0, self.logs_page.model.rowCount())
         for log in logs:
             check_item = QStandardItem()
             check_item.setCheckable(True)
@@ -287,18 +201,18 @@ class MainWindow(QMainWindow):
             ts_item = QStandardItem(log.get("timestamp", ""))
             for item in [check_item, type_item, file_item, count_item, ts_item]:
                 item.setEditable(False)
-            self.logs_model.appendRow([check_item, type_item, file_item, count_item, ts_item])
+            self.logs_page.model.appendRow([check_item, type_item, file_item, count_item, ts_item])
 
         self.log_current_page = page
         self.log_total_pages = max(1, (total + 29) // 30)
-        self.log_page_label.setText(f"{self.log_current_page} / {self.log_total_pages}")
-        self.log_prev_btn.setEnabled(self.log_current_page > 1)
-        self.log_next_btn.setEnabled(self.log_current_page < self.log_total_pages)
+        self.logs_page.page_label.setText(f"{self.log_current_page} / {self.log_total_pages}")
+        self.logs_page.prev_btn.setEnabled(self.log_current_page > 1)
+        self.logs_page.next_btn.setEnabled(self.log_current_page < self.log_total_pages)
 
     def _selected_log_indices(self):
         indices = []
-        for row in range(self.logs_model.rowCount()):
-            item = self.logs_model.item(row, 0)
+        for row in range(self.logs_page.model.rowCount()):
+            item = self.logs_page.model.item(row, 0)
             if item.checkState() == Qt.Checked:
                 idx = item.data(Qt.UserRole)
                 indices.append(idx)
