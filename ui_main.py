@@ -1,7 +1,7 @@
 import sys
 from PySide6.QtWidgets import (
     QMainWindow, QWidget, QListWidget, QStackedWidget, QTextEdit, QLabel,
-    QHBoxLayout, QVBoxLayout, QMessageBox, QToolButton, QDialog
+    QHBoxLayout, QVBoxLayout, QMessageBox, QToolButton
 )
 from PySide6.QtCore import Qt, QObject, Signal
 from PySide6.QtGui import QStandardItem, QStandardItemModel
@@ -13,7 +13,7 @@ from views.register_page import RegisterPage
 from views.clear_page import ClearPage
 from views.search_page import SearchPage
 from views.logs_page import LogsPage
-from views.custom_dialog import CustomEditDialog
+from views.custom_page import CustomEditPage
 
 
 class EmittingStream(QObject):
@@ -61,6 +61,8 @@ class MainWindow(QMainWindow):
         self.clear_page = ClearPage()
         self.search_page = SearchPage()
         self.logs_page = LogsPage()
+        self.custom_page = CustomEditPage()
+        self._pending_zipcodes = []
 
         # ボタンに処理を接続
         self.bulk_page.run_button.clicked.connect(
@@ -81,11 +83,14 @@ class MainWindow(QMainWindow):
             lambda: self.load_logs_page(self.log_current_page - 1))
         self.logs_page.next_btn.clicked.connect(
             lambda: self.load_logs_page(self.log_current_page + 1))
+        self.custom_page.accepted.connect(self._custom_page_accepted)
+        self.custom_page.cancelled.connect(self._custom_page_cancelled)
 
         # ページ切替部
         self.stack = QStackedWidget()
         for page in [self.bulk_page, self.add_page, self.del_page,
-                     self.clear_page, self.search_page, self.logs_page]:
+                     self.clear_page, self.search_page, self.logs_page,
+                     self.custom_page]:
             self.stack.addWidget(page)
 
         # メイン領域
@@ -242,19 +247,25 @@ class MainWindow(QMainWindow):
         selected = self.search_page.selected_zipcodes()
         if not selected:
             return
-        dlg = CustomEditDialog(self)
-        if dlg.exec() == QDialog.Accepted:
-            data = dlg.get_data()
-            reply = QMessageBox.question(
-                self,
-                "確認",
-                f"{len(selected)} 件のレコードに適用しますか？",
-                QMessageBox.Yes | QMessageBox.No,
-            )
-            if reply == QMessageBox.Yes:
-                msg = self.controller.update_custom_fields(selected, data)
-                self.output.append(msg)
-                self.perform_search(self.current_page)
+        self._pending_zipcodes = selected
+        self.custom_page.tree.clear()
+        self.stack.setCurrentWidget(self.custom_page)
+
+    def _custom_page_accepted(self, data):
+        reply = QMessageBox.question(
+            self,
+            "確認",
+            f"{len(self._pending_zipcodes)} 件のレコードに適用しますか？",
+            QMessageBox.Yes | QMessageBox.No,
+        )
+        if reply == QMessageBox.Yes:
+            msg = self.controller.update_custom_fields(self._pending_zipcodes, data)
+            self.output.append(msg)
+            self.perform_search(self.current_page)
+        self.stack.setCurrentWidget(self.search_page)
+
+    def _custom_page_cancelled(self):
+        self.stack.setCurrentWidget(self.search_page)
 
     # --- log page related ---
     def load_logs_page(self, page: int = 1):
