@@ -74,6 +74,7 @@ class MainWindow(QMainWindow):
         self.search_page.next_btn.clicked.connect(self.next_page)
         self.logs_page.restore_btn.clicked.connect(self.restore_selected_logs)
         self.logs_page.delete_log_btn.clicked.connect(self.delete_selected_logs)
+        self.logs_page.reapply_btn.clicked.connect(self.reapply_selected_logs)
         self.logs_page.prev_btn.clicked.connect(
             lambda: self.load_logs_page(self.log_current_page - 1))
         self.logs_page.next_btn.clicked.connect(
@@ -236,6 +237,10 @@ class MainWindow(QMainWindow):
         logs, total = self.controller.fetch_logs(page, per_page=30)
         self.logs_page.logs = logs
 
+        self.logs_page.details_model.removeRows(
+            0, self.logs_page.details_model.rowCount()
+        )
+
         self.logs_page.model.removeRows(0, self.logs_page.model.rowCount())
         for log in logs:
             check_item = QStandardItem()
@@ -282,5 +287,13 @@ class MainWindow(QMainWindow):
         if not indices:
             return
         msg = self.controller.delete_logs(indices)
+        self.output.append(msg)
+        self.load_logs_page(self.log_current_page)
+
+    def reapply_selected_logs(self):
+        indices = self._selected_log_indices()
+        if not indices:
+            return
+        msg = self.controller.reapply_logs(indices)
         self.output.append(msg)
         self.load_logs_page(self.log_current_page)
