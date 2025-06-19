@@ -214,13 +214,11 @@ class MainWindow(QMainWindow):
 
         self.search_page.model.removeRows(0, self.search_page.model.rowCount())
         for zipcode, pref, city, town in records:
-            check_item = QStandardItem()
-            check_item.setCheckable(True)
-            check_item.setEditable(False)
-            row_items = [check_item] + [QStandardItem(x) for x in [zipcode, pref, city, town]]
-            for item in row_items[1:]:
+            row_items = [QStandardItem(x) for x in [zipcode, pref, city, town]]
+            for item in row_items:
                 item.setEditable(False)
             self.search_page.model.appendRow(row_items)
+        self.search_page.table.clearSelection()
         self.search_page._update_button_state()
 
         if total == 0:
@@ -278,10 +276,8 @@ class MainWindow(QMainWindow):
 
         self.logs_page.model.removeRows(0, self.logs_page.model.rowCount())
         for log in logs:
-            check_item = QStandardItem()
-            check_item.setCheckable(True)
-            check_item.setData(log["index"], Qt.UserRole)
             type_item = QStandardItem("追加" if log["type"] == "add" else "削除")
+            type_item.setData(log["index"], Qt.UserRole)
             file_item = QStandardItem(log.get("source_file", ""))
             count_item = QStandardItem(str(log.get("record_count", 0)))
             ts = log.get("timestamp", "")
@@ -290,9 +286,10 @@ class MainWindow(QMainWindow):
             except Exception:
                 pass
             ts_item = QStandardItem(ts)
-            for item in [check_item, type_item, file_item, count_item, ts_item]:
+            for item in [type_item, file_item, count_item, ts_item]:
                 item.setEditable(False)
-            self.logs_page.model.appendRow([check_item, type_item, file_item, count_item, ts_item])
+            self.logs_page.model.appendRow([type_item, file_item, count_item, ts_item])
+        self.logs_page.table.clearSelection()
 
         self.log_current_page = page
         self.log_total_pages = max(1, (total + 29) // 30)
@@ -302,11 +299,10 @@ class MainWindow(QMainWindow):
 
     def _selected_log_indices(self):
         indices = []
-        for row in range(self.logs_page.model.rowCount()):
-            item = self.logs_page.model.item(row, 0)
-            if item.checkState() == Qt.Checked:
-                idx = item.data(Qt.UserRole)
-                indices.append(idx)
+        for index in self.logs_page.table.selectionModel().selectedRows():
+            item = self.logs_page.model.item(index.row(), 0)
+            idx = item.data(Qt.UserRole)
+            indices.append(idx)
         return indices
 
     def restore_selected_logs(self):
