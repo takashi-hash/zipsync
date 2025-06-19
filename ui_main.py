@@ -1,6 +1,7 @@
 from PySide6.QtWidgets import (
     QMainWindow, QWidget, QListWidget, QStackedWidget, QTableView,
-    QHBoxLayout, QVBoxLayout, QLineEdit, QPushButton, QTextEdit, QLabel
+    QHBoxLayout, QVBoxLayout, QLineEdit, QPushButton, QTextEdit, QLabel,
+    QMessageBox
 )
 from controller import Controller
 from PySide6.QtCore import Qt
@@ -145,6 +146,16 @@ class MainWindow(QMainWindow):
             self.model.appendRow(items)
 
     def run_bulk(self, url):
+        if self.controller.get_record_count() > 0:
+            reply = QMessageBox.question(
+                self,
+                "確認",
+                "既にデータが存在します。削除して一括登録しますか？",
+                QMessageBox.Yes | QMessageBox.No,
+            )
+            if reply != QMessageBox.Yes:
+                self.output.append("[CANCELLED] 一括登録を中止しました")
+                return
         msg = self.controller.bulk_register(url)
         self.output.append(msg)
 
