@@ -98,9 +98,12 @@ class MainWindow(QMainWindow):
         self.pref_input.setPlaceholderText("都道府県")
         self.city_input = QLineEdit()
         self.city_input.setPlaceholderText("市区町村")
+        self.town_input = QLineEdit()
+        self.town_input.setPlaceholderText("町域")
         self.search_btn = QPushButton("検索")
         self.search_btn.clicked.connect(lambda: self.perform_search(1))
-        for w in [self.zip_input, self.pref_input, self.city_input, self.search_btn]:
+        for w in [self.zip_input, self.pref_input, self.city_input,
+                  self.town_input, self.search_btn]:
             form.addWidget(w)
         v.addLayout(form)
 
@@ -165,8 +168,9 @@ class MainWindow(QMainWindow):
         zipcode = self.zip_input.text().strip()
         pref = self.pref_input.text().strip()
         city = self.city_input.text().strip()
+        town = self.town_input.text().strip()
         records, total = self.controller.search_addresses(
-            zipcode, pref, city, page, per_page=30)
+            zipcode, pref, city, town, page, per_page=30)
 
         self.model.removeRows(0, self.model.rowCount())
         for zipcode, pref, city, town in records:
