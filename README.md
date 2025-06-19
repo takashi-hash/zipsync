@@ -39,12 +39,14 @@ python main.py
 | 差分追加 | `utf_add_YYMM.zip` の内容を追加登録 |
 | 差分削除 | `utf_del_YYMM.zip` の内容を論理削除 |
 | 検索 | 郵便番号・都道府県・市区町村・町域でリアルタイム検索 |
+| 詳細検索API | バックエンドで郵便番号・都道府県・市町村を条件指定して検索 |
+| ページ付検索UI | 3 項目入力で条件指定し、30 件ずつページ送り |
 | ログ表示 | 各操作の結果を画面下部に表示 |
 
 ## 🎨 UI について
 - PySide6 ベースのシンプルな GUI
 - 左メニューで画面切り替え（`QListWidget` + `QStackedWidget`）
-- 検索ページは `QTableView` + `QSortFilterProxyModel` による高速フィルタ
+- 検索ページは郵便番号・都道府県・市区町村を指定し、30 件ずつページ送り可能
 - テーマには `qt-material` の `dark_teal.xml` を使用
 
 ## 📘 今後の拡張予定

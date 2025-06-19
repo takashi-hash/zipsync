@@ -4,7 +4,6 @@ from PySide6.QtWidgets import (
 )
 from controller import Controller
 from PySide6.QtCore import Qt
-from PySide6.QtCore import QSortFilterProxyModel
 from PySide6.QtGui import QStandardItemModel, QStandardItem
 
 
@@ -71,33 +70,50 @@ class MainWindow(QMainWindow):
     def create_search_page(self):
         page = QWidget()
         v = QVBoxLayout(page)
-        v.addWidget(QLabel("検索"))
+        v.addWidget(QLabel("詳細検索"))
 
-        self.search_input = QLineEdit()
-        self.search_input.setPlaceholderText("郵便番号・市区町村・町域 等で検索")
-        v.addWidget(self.search_input)
+        form = QHBoxLayout()
+        self.zip_input = QLineEdit()
+        self.zip_input.setPlaceholderText("郵便番号")
+        self.pref_input = QLineEdit()
+        self.pref_input.setPlaceholderText("都道府県")
+        self.city_input = QLineEdit()
+        self.city_input.setPlaceholderText("市区町村")
+        self.search_btn = QPushButton("検索")
+        self.search_btn.clicked.connect(lambda: self.perform_search(1))
+        for w in [self.zip_input, self.pref_input, self.city_input, self.search_btn]:
+            form.addWidget(w)
+        v.addLayout(form)
 
         self.table = QTableView()
         v.addWidget(self.table, 1)
 
-        # モデルとフィルタ設定
         self.model = QStandardItemModel(0, 4)
         self.model.setHorizontalHeaderLabels(["郵便番号", "都道府県", "市区町村", "町域"])
-        self.proxy = QSortFilterProxyModel()
-        self.proxy.setSourceModel(self.model)
-        self.proxy.setFilterKeyColumn(-1)  # 全列検索
-        self.proxy.setFilterCaseSensitivity(Qt.CaseInsensitive)
-        self.table.setModel(self.proxy)
+        self.table.setModel(self.model)
 
-        self.search_input.textChanged.connect(self.proxy.setFilterFixedString)
+        pager = QHBoxLayout()
+        self.prev_btn = QPushButton("前へ")
+        self.prev_btn.clicked.connect(self.prev_page)
+        self.next_btn = QPushButton("次へ")
+        self.next_btn.clicked.connect(self.next_page)
+        self.page_label = QLabel("1 / 1")
+        for w in [self.prev_btn, self.page_label, self.next_btn]:
+            pager.addWidget(w)
+        pager.addStretch()
+        v.addLayout(pager)
+
+        self.current_page = 1
+        self.total_pages = 1
         return page
 
     def switch_page(self, index):
         self.stack.setCurrentIndex(index)
         if index == 3:  # 検索ページならデータ読み込み
-            self.load_table_data()
+            self.perform_search(1)
 
     def load_table_data(self):
+        # 古いAPI互換のため残しているが現在は未使用
         data = self.controller.get_all_addresses()
         self.model.removeRows(0, self.model.rowCount())
         for zipcode, pref, city, town in data:
@@ -117,3 +133,32 @@ class MainWindow(QMainWindow):
     def run_del(self, url):
         msg = self.controller.apply_del(url)
         self.output.append(msg)
+
+    # --- 検索関連処理 ---
+    def perform_search(self, page: int = 1):
+        zipcode = self.zip_input.text().strip()
+        pref = self.pref_input.text().strip()
+        city = self.city_input.text().strip()
+        records, total = self.controller.search_addresses(
+            zipcode, pref, city, page, per_page=30)
+
+        self.model.removeRows(0, self.model.rowCount())
+        for zipcode, pref, city, town in records:
+            items = [QStandardItem(x) for x in [zipcode, pref, city, town]]
+            for item in items:
+                item.setEditable(False)
+            self.model.appendRow(items)
+
+        self.current_page = page
+        self.total_pages = max(1, (total + 29) // 30)
+        self.page_label.setText(f"{self.current_page} / {self.total_pages}")
+        self.prev_btn.setEnabled(self.current_page > 1)
+        self.next_btn.setEnabled(self.current_page < self.total_pages)
+
+    def prev_page(self):
+        if self.current_page > 1:
+            self.perform_search(self.current_page - 1)
+
+    def next_page(self):
+        if self.current_page < self.total_pages:
+            self.perform_search(self.current_page + 1)
