@@ -11,6 +11,9 @@ class LogsPage(QWidget):
         super().__init__()
         layout = QVBoxLayout(self)
         layout.addWidget(QLabel("差分取込履歴"))
+        layout.addWidget(QLabel(
+            "一覧から履歴を選択し、下のボタンで復元・再実行・削除できます。"
+        ))
 
         self.model = QStandardItemModel(0, 5)
         self.model.setHorizontalHeaderLabels([
@@ -26,8 +29,10 @@ class LogsPage(QWidget):
         self.table.clicked.connect(self._display_details)
         layout.addWidget(self.table, 1)
 
-        self.details_model = QStandardItemModel(0, 3)
-        self.details_model.setHorizontalHeaderLabels(["郵便番号", "都道府県", "町域"])
+        self.details_model = QStandardItemModel(0, 4)
+        self.details_model.setHorizontalHeaderLabels([
+            "郵便番号", "都道府県", "市区町村", "町域"
+        ])
         self.details_table = QTableView()
         self.details_table.setModel(self.details_model)
         d_header = self.details_table.horizontalHeader()
@@ -63,7 +68,10 @@ class LogsPage(QWidget):
             return
         log = self.logs[row]
         details = log.get("details", [])
-        detail_lines = [f"{d.get('zipcode', '')} {d.get('pref', '')} {d.get('town', '')}" for d in details]
+        detail_lines = [
+            f"{d.get('zipcode', '')} {d.get('pref', '')} {d.get('city', '')} {d.get('town', '')}"
+            for d in details
+        ]
         text = "\n".join(detail_lines) if detail_lines else "(詳細なし)"
         QMessageBox.information(self, "詳細", text)
 
@@ -77,6 +85,7 @@ class LogsPage(QWidget):
             items = [
                 QStandardItem(d.get("zipcode", "")),
                 QStandardItem(d.get("pref", "")),
+                QStandardItem(d.get("city", "")),
                 QStandardItem(d.get("town", "")),
             ]
             for item in items:

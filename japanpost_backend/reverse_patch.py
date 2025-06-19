@@ -27,7 +27,7 @@ def reverse_log_entry(index: int) -> str:
             records.append({
                 "zipcode": r["zipcode"],
                 "pref": r["pref"],
-                "city": "",  # 必要なら補完。今回は町レベルで登録
+                "city": r.get("city", ""),  # ログに市区町村があれば使用
                 "town": r["town"],
                 "kana": {"pref": "", "city": "", "town": ""},
                 "custom": {}
