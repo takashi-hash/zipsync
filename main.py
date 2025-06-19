@@ -5,7 +5,7 @@ from ui_main import MainWindow
 
 def main():
     app = QApplication(sys.argv)
-    apply_stylesheet(app, theme="dark_teal.xml")  # ダーク・ティール系テーマを適用
+    apply_stylesheet(app, theme="resources/themes/easy_reading.xml")
     window = MainWindow()
     window.show()
     sys.exit(app.exec())

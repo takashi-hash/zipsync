@@ -49,7 +49,7 @@ python main.py
 - PySide6 ベースのシンプルな GUI
 - 左メニューで画面切り替え（`QListWidget` + `QStackedWidget`）
 - 検索ページは郵便番号・都道府県・市区町村・町域を指定し、30 件ずつページ送り可能
-- テーマには `qt-material` の `dark_teal.xml` を使用
+- テーマには `qt-material` のカスタムテーマ `easy_reading.xml` を使用
 
 ## 📘 今後の拡張予定
 - カスタム項目（メモ、タグ）編集
