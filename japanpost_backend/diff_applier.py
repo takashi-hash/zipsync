@@ -58,3 +58,23 @@ def apply_del_zip(zip_path: str, download_url: str = ""):
     )
     append_log(log)
     print(f"[OK] {len(records)} 件を削除しました。")
+
+def apply_add_zip_without_log(zip_path: str):
+    """追加データを登録するが履歴を記録しない"""
+    records = load_csv_from_zip(zip_path)
+    if not records:
+        print(f"[WARN] データが空: {zip_path}")
+        return
+    insert_all(records)
+    print(f"[OK] {len(records)} 件を追加しました。")
+
+
+def apply_del_zip_without_log(zip_path: str):
+    """削除データを削除するが履歴を記録しない"""
+    records = load_csv_from_zip(zip_path)
+    if not records:
+        print(f"[WARN] データが空: {zip_path}")
+        return
+    for record in records:
+        remove_by_zipcode(record["zipcode"])
+    print(f"[OK] {len(records)} 件を削除しました。")

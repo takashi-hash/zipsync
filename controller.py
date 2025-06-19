@@ -1,6 +1,9 @@
 from japanpost_backend.file_fetcher import download_zip
 from japanpost_backend.bulk_register import bulk_register
-from japanpost_backend.diff_applier import apply_add_zip, apply_del_zip
+from japanpost_backend.diff_applier import (
+    apply_add_zip, apply_del_zip,
+)
+from japanpost_backend.reapply_patch import reapply_log_entry
 from japanpost_backend.db_manager import get_all, clear_all, count_records
 from japanpost_backend.search_manager import search_with_filters
 from japanpost_backend.log_manager import get_logs, delete_log
@@ -70,4 +73,10 @@ class Controller:
         for idx in sorted(indices, reverse=True):
             delete_log(idx)
         return "[OK] 履歴を削除しました"
+
+    def reapply_logs(self, indices):
+        msgs = []
+        for idx in sorted(indices):
+            msgs.append(reapply_log_entry(idx))
+        return "\n".join(msgs)
 
