@@ -189,6 +189,7 @@ class MainWindow(QMainWindow):
     # --- log page related ---
     def load_logs_page(self, page: int = 1):
         logs, total = self.controller.fetch_logs(page, per_page=30)
+        self.logs_page.logs = logs
 
         self.logs_page.model.removeRows(0, self.logs_page.model.rowCount())
         for log in logs:
@@ -198,7 +199,12 @@ class MainWindow(QMainWindow):
             type_item = QStandardItem("追加" if log["type"] == "add" else "削除")
             file_item = QStandardItem(log.get("source_file", ""))
             count_item = QStandardItem(str(log.get("record_count", 0)))
-            ts_item = QStandardItem(log.get("timestamp", ""))
+            ts = log.get("timestamp", "")
+            try:
+                ts = __import__("datetime").datetime.fromisoformat(ts).strftime("%Y/%m/%d %H:%M")
+            except Exception:
+                pass
+            ts_item = QStandardItem(ts)
             for item in [check_item, type_item, file_item, count_item, ts_item]:
                 item.setEditable(False)
             self.logs_page.model.appendRow([check_item, type_item, file_item, count_item, ts_item])
