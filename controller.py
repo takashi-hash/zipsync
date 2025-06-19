@@ -3,6 +3,8 @@ from japanpost_backend.bulk_register import bulk_register
 from japanpost_backend.diff_applier import apply_add_zip, apply_del_zip
 from japanpost_backend.db_manager import get_all, clear_all, count_records
 from japanpost_backend.search_manager import search_with_filters
+from japanpost_backend.log_manager import get_logs, delete_log
+from japanpost_backend.reverse_patch import reverse_log_entry
 
 
 class Controller:
@@ -52,4 +54,20 @@ class Controller:
     def get_record_count(self) -> int:
         """Return number of records in the database."""
         return count_records()
+
+    # --- log handling ---
+    def fetch_logs(self, page: int = 1, per_page: int = 30):
+        """Return paginated import logs and total count."""
+        return get_logs(page, per_page)
+
+    def reverse_logs(self, indices):
+        msgs = []
+        for idx in sorted(indices):
+            msgs.append(reverse_log_entry(idx))
+        return "\n".join(msgs)
+
+    def delete_logs(self, indices):
+        for idx in sorted(indices, reverse=True):
+            delete_log(idx)
+        return "[OK] 履歴を削除しました"
 
