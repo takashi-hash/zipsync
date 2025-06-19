@@ -24,9 +24,9 @@ def create_log_entry(source_file: str, file_type: str, records: List[Dict], url:
         "record_count": len(records),
         "download_url": url,
         "details": [{
-            "zipcode": r["zipcode"],
-            "pref": r["pref"],
+            "zipcode": r.get("zipcode", ""),
+            "pref": r.get("pref", ""),
             "city": r.get("city", ""),
-            "town": r["town"]
+            "town": r.get("town", "")
         } for r in records]
     }
