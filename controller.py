@@ -1,7 +1,7 @@
 from japanpost_backend.file_fetcher import download_zip
 from japanpost_backend.bulk_register import bulk_register
 from japanpost_backend.diff_applier import apply_add_zip, apply_del_zip
-from japanpost_backend.db_manager import get_all, search_with_filters
+from japanpost_backend.db_manager import get_all, search_with_filters, clear_all
 
 
 class Controller:
@@ -38,3 +38,12 @@ class Controller:
         results, total = search_with_filters(zipcode, pref, city, page, per_page)
         data = [(r["zipcode"], r["pref"], r["city"], r["town"]) for r in results]
         return data, total
+
+    def clear_database(self):
+        """Remove all address records."""
+        try:
+            clear_all()
+            return "[OK] 全データを削除しました"
+        except Exception as e:
+            return f"[ERROR] 全データ削除失敗: {e}"
+

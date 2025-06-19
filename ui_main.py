@@ -17,7 +17,7 @@ class MainWindow(QMainWindow):
 
         # サイドメニュー
         self.menu = QListWidget()
-        self.menu.addItems(["一括登録", "差分追加", "差分削除", "検索"])
+        self.menu.addItems(["一括登録", "差分追加", "差分削除", "全削除", "検索"])
         self.menu.setFixedWidth(180)
         self.menu.currentRowChanged.connect(self.switch_page)
 
@@ -27,6 +27,7 @@ class MainWindow(QMainWindow):
             "一括登録", "一括登録 実行", self.run_bulk))
         self.stack.addWidget(self.create_page("差分追加", "差分追加 実行", self.run_add))
         self.stack.addWidget(self.create_page("差分削除", "差分削除 実行", self.run_del))
+        self.stack.addWidget(self.create_clear_page())
         self.stack.addWidget(self.create_search_page())
 
         # メイン領域
@@ -61,8 +62,18 @@ class MainWindow(QMainWindow):
                 .replace("差分追加", "url_add")
                 .replace("差分削除", "url_del"), url_input)
         btn = QPushButton(btn_text)
-        btn.clicked.connect(lambda: self.run_bulk(self.url_all.text()))
+        btn.clicked.connect(lambda: slot(url_input.text()))
         v.addWidget(url_input)
+        v.addWidget(btn)
+        v.addStretch()
+        return page
+
+    def create_clear_page(self):
+        page = QWidget()
+        v = QVBoxLayout(page)
+        v.addWidget(QLabel("登録データを全て削除"))
+        btn = QPushButton("全削除 実行")
+        btn.clicked.connect(self.run_clear)
         v.addWidget(btn)
         v.addStretch()
         return page
@@ -109,7 +120,7 @@ class MainWindow(QMainWindow):
 
     def switch_page(self, index):
         self.stack.setCurrentIndex(index)
-        if index == 3:  # 検索ページならデータ読み込み
+        if index == 4:  # 検索ページならデータ読み込み
             self.perform_search(1)
 
     def load_table_data(self):
@@ -132,6 +143,10 @@ class MainWindow(QMainWindow):
 
     def run_del(self, url):
         msg = self.controller.apply_del(url)
+        self.output.append(msg)
+
+    def run_clear(self):
+        msg = self.controller.clear_database()
         self.output.append(msg)
 
     # --- 検索関連処理 ---
