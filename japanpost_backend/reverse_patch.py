@@ -1,13 +1,13 @@
-from db_manager import insert_all, remove_by_zipcode
-from log_manager import load_logs
+from .db_manager import insert_all, remove_by_zipcode
+from .log_manager import load_logs
 from typing import Literal
 
 
-def reverse_log_entry(index: int):
+def reverse_log_entry(index: int) -> str:
+    """Reverse the effect of a log entry by index and return result message."""
     logs = load_logs()
     if index < 0 or index >= len(logs):
-        print(f"[ERROR] 指定インデックスが無効: {index}")
-        return
+        return f"[ERROR] 指定インデックスが無効: {index}"
 
     log = logs[index]
     entry_type: Literal["add", "del"] = log["type"]
@@ -17,7 +17,7 @@ def reverse_log_entry(index: int):
         # 「追加ログ」を取り消す → 削除する
         for record in details:
             remove_by_zipcode(record["zipcode"])
-        print(f"[REVERSED] add ログ #{index} を取り消しました（{len(details)} 件削除）")
+        return f"[REVERSED] add ログ #{index} を取り消しました（{len(details)} 件削除）"
 
     elif entry_type == "del":
         # 「削除ログ」を復元する → 追加する
@@ -33,7 +33,7 @@ def reverse_log_entry(index: int):
                 "custom": {}
             })
         insert_all(records)
-        print(f"[REVERSED] del ログ #{index} を復元しました（{len(records)} 件追加）")
+        return f"[REVERSED] del ログ #{index} を復元しました（{len(records)} 件追加）"
 
     else:
-        print(f"[ERROR] 未知のログタイプ: {entry_type}")
+        return f"[ERROR] 未知のログタイプ: {entry_type}"
