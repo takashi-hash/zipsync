@@ -9,7 +9,8 @@ DB_PATH = os.path.join(DB_DIR, "address.json")
 # ディレクトリがなければ作成
 os.makedirs(DB_DIR, exist_ok=True)
 
-db = TinyDB(DB_PATH)
+# Use UTF-8 encoding and keep non-ASCII chars as-is
+db = TinyDB(DB_PATH, encoding="utf-8", ensure_ascii=False)
 Address = Query()
 
 
