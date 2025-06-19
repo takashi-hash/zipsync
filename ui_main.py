@@ -4,7 +4,12 @@ from PySide6.QtWidgets import (
 )
 from controller import Controller
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QStandardItemModel, QStandardItem
+from PySide6.QtGui import (
+    QStandardItemModel,
+    QStandardItem,
+    QRegularExpressionValidator,
+    QRegularExpression,
+)
 
 
 class MainWindow(QMainWindow):
@@ -86,6 +91,9 @@ class MainWindow(QMainWindow):
         form = QHBoxLayout()
         self.zip_input = QLineEdit()
         self.zip_input.setPlaceholderText("郵便番号")
+        self.zip_input.setMaxLength(7)
+        regex = QRegularExpression(r"\d{0,7}")
+        self.zip_input.setValidator(QRegularExpressionValidator(regex))
         self.pref_input = QLineEdit()
         self.pref_input.setPlaceholderText("都道府県")
         self.city_input = QLineEdit()
@@ -98,6 +106,9 @@ class MainWindow(QMainWindow):
 
         self.table = QTableView()
         v.addWidget(self.table, 1)
+
+        self.no_results_label = QLabel("")
+        v.addWidget(self.no_results_label)
 
         self.model = QStandardItemModel(0, 4)
         self.model.setHorizontalHeaderLabels(["郵便番号", "都道府県", "市区町村", "町域"])
@@ -163,6 +174,11 @@ class MainWindow(QMainWindow):
             for item in items:
                 item.setEditable(False)
             self.model.appendRow(items)
+
+        if total == 0:
+            self.no_results_label.setText("検索結果は0件です")
+        else:
+            self.no_results_label.setText("")
 
         self.current_page = page
         self.total_pages = max(1, (total + 29) // 30)
