@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit,
-    QPushButton, QTableView
+    QPushButton, QTableView, QAbstractItemView
 )
 from PySide6.QtCore import Qt, QRegularExpression
 from PySide6.QtGui import QStandardItemModel, QStandardItem, QRegularExpressionValidator
@@ -32,6 +32,8 @@ class SearchPage(QWidget):
         layout.addLayout(form)
 
         self.table = QTableView()
+        self.table.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.table.setSelectionMode(QAbstractItemView.MultiSelection)
         layout.addWidget(self.table, 1)
 
         self.add_custom_btn = QPushButton("項目を追加")
@@ -41,10 +43,10 @@ class SearchPage(QWidget):
         self.no_results_label = QLabel("")
         layout.addWidget(self.no_results_label)
 
-        self.model = QStandardItemModel(0, 5)
-        self.model.setHorizontalHeaderLabels(["選択", "郵便番号", "都道府県", "市区町村", "町域"])
+        self.model = QStandardItemModel(0, 4)
+        self.model.setHorizontalHeaderLabels(["郵便番号", "都道府県", "市区町村", "町域"])
         self.table.setModel(self.model)
-        self.model.itemChanged.connect(self._update_button_state)
+        self.table.selectionModel().selectionChanged.connect(self._update_button_state)
 
         pager = QHBoxLayout()
         self.prev_btn = QPushButton("前へ")
@@ -59,18 +61,11 @@ class SearchPage(QWidget):
         self.total_pages = 1
 
     def _update_button_state(self, *args):
-        selected = False
-        for row in range(self.model.rowCount()):
-            item = self.model.item(row, 0)
-            if item.checkState() == Qt.Checked:
-                selected = True
-                break
+        selected = bool(self.table.selectionModel().selectedRows())
         self.add_custom_btn.setEnabled(selected)
 
     def selected_zipcodes(self):
         zips = []
-        for row in range(self.model.rowCount()):
-            item = self.model.item(row, 0)
-            if item.checkState() == Qt.Checked:
-                zips.append(self.model.item(row, 1).text())
+        for index in self.table.selectionModel().selectedRows():
+            zips.append(self.model.item(index.row(), 0).text())
         return zips

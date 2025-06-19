@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QLabel, QHBoxLayout,
-    QPushButton, QTableView, QMessageBox, QHeaderView
+    QPushButton, QTableView, QMessageBox, QHeaderView, QAbstractItemView
 )
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QStandardItemModel, QStandardItem
@@ -15,16 +15,18 @@ class LogsPage(QWidget):
             "一覧から履歴を選択し、下のボタンで復元・再実行・削除できます。"
         ))
 
-        self.model = QStandardItemModel(0, 5)
+        self.model = QStandardItemModel(0, 4)
         self.model.setHorizontalHeaderLabels([
-            "選択", "種別", "ファイル", "件数", "日時"
+            "種別", "ファイル", "件数", "日時"
         ])
         self.table = QTableView()
         self.table.setModel(self.model)
+        self.table.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.table.setSelectionMode(QAbstractItemView.MultiSelection)
         header = self.table.horizontalHeader()
         header.setSectionResizeMode(QHeaderView.ResizeToContents)
-        self.table.setColumnWidth(2, 250)
-        self.table.setColumnWidth(4, 150)
+        self.table.setColumnWidth(1, 250)
+        self.table.setColumnWidth(3, 150)
         self.table.doubleClicked.connect(self._show_details)
         self.table.clicked.connect(self._display_details)
         layout.addWidget(self.table, 1)
