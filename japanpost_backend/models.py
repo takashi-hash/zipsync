@@ -23,5 +23,10 @@ def create_log_entry(source_file: str, file_type: str, records: List[Dict], url:
         "timestamp": __import__('datetime').datetime.now().isoformat(),
         "record_count": len(records),
         "download_url": url,
-        "details": [{"zipcode": r["zipcode"], "pref": r["pref"], "town": r["town"]} for r in records]
+        "details": [{
+            "zipcode": r["zipcode"],
+            "pref": r["pref"],
+            "city": r.get("city", ""),
+            "town": r["town"]
+        } for r in records]
     }

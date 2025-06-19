@@ -278,22 +278,43 @@ class MainWindow(QMainWindow):
         indices = self._selected_log_indices()
         if not indices:
             return
-        msg = self.controller.reverse_logs(indices)
-        self.output.append(msg)
-        self.load_logs_page(self.log_current_page)
+        reply = QMessageBox.question(
+            self,
+            "確認",
+            f"{len(indices)} 件の履歴を復元しますか？",
+            QMessageBox.Yes | QMessageBox.No,
+        )
+        if reply == QMessageBox.Yes:
+            msg = self.controller.reverse_logs(indices)
+            self.output.append(msg)
+            self.load_logs_page(self.log_current_page)
 
     def delete_selected_logs(self):
         indices = self._selected_log_indices()
         if not indices:
             return
-        msg = self.controller.delete_logs(indices)
-        self.output.append(msg)
-        self.load_logs_page(self.log_current_page)
+        reply = QMessageBox.question(
+            self,
+            "確認",
+            f"{len(indices)} 件の履歴を削除しますか？",
+            QMessageBox.Yes | QMessageBox.No,
+        )
+        if reply == QMessageBox.Yes:
+            msg = self.controller.delete_logs(indices)
+            self.output.append(msg)
+            self.load_logs_page(self.log_current_page)
 
     def reapply_selected_logs(self):
         indices = self._selected_log_indices()
         if not indices:
             return
-        msg = self.controller.reapply_logs(indices)
-        self.output.append(msg)
-        self.load_logs_page(self.log_current_page)
+        reply = QMessageBox.question(
+            self,
+            "確認",
+            f"{len(indices)} 件の履歴を再実行しますか？",
+            QMessageBox.Yes | QMessageBox.No,
+        )
+        if reply == QMessageBox.Yes:
+            msg = self.controller.reapply_logs(indices)
+            self.output.append(msg)
+            self.load_logs_page(self.log_current_page)
