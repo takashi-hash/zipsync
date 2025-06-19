@@ -30,11 +30,11 @@ def search_with_filters(
     """Search addresses with optional filters and pagination."""
     conditions = []
     if zipcode:
-        conditions.append(Address.zipcode == zipcode)
+        conditions.append(Address.zipcode.search(zipcode))
     if pref:
-        conditions.append(Address.pref == pref)
+        conditions.append(Address.pref.search(pref))
     if city:
-        conditions.append(Address.city == city)
+        conditions.append(Address.city.search(city))
 
     if conditions:
         query = reduce(lambda a, b: a & b, conditions)
