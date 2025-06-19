@@ -7,7 +7,7 @@ def main():
     app = QApplication(sys.argv)
     apply_stylesheet(app, theme="resources/themes/easy_reading.xml")
     window = MainWindow()
-    window.show()
+    window.showMaximized()
     sys.exit(app.exec())
 
 if __name__ == "__main__":
