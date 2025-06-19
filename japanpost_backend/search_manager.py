@@ -24,6 +24,7 @@ def search_with_filters(
     zipcode: str = "",
     pref: str = "",
     city: str = "",
+    town: str = "",
     page: int = 1,
     per_page: int = 30,
 ) -> Tuple[List[Dict], int]:
@@ -35,6 +36,8 @@ def search_with_filters(
         conditions.append(Address.pref.search(pref))
     if city:
         conditions.append(Address.city.search(city))
+    if town:
+        conditions.append(Address.town.search(town))
 
     if conditions:
         query = reduce(lambda a, b: a & b, conditions)

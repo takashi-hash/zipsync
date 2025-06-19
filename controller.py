@@ -35,8 +35,9 @@ class Controller:
         return [(r["zipcode"], r["pref"], r["city"], r["town"]) for r in records]
 
     def search_addresses(self, zipcode: str = "", pref: str = "", city: str = "",
-                         page: int = 1, per_page: int = 30):
-        results, total = search_with_filters(zipcode, pref, city, page, per_page)
+                         town: str = "", page: int = 1, per_page: int = 30):
+        results, total = search_with_filters(zipcode, pref, city, town,
+                                            page, per_page)
         data = [(r["zipcode"], r["pref"], r["city"], r["town"]) for r in results]
         return data, total
 
