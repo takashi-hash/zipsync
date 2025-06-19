@@ -1,7 +1,8 @@
 from japanpost_backend.file_fetcher import download_zip
 from japanpost_backend.bulk_register import bulk_register
 from japanpost_backend.diff_applier import apply_add_zip, apply_del_zip
-from japanpost_backend.db_manager import get_all, search_with_filters, clear_all
+from japanpost_backend.db_manager import get_all, clear_all
+from japanpost_backend.search_manager import search_with_filters
 
 
 class Controller:
