@@ -35,3 +35,8 @@ def update_custom(zipcode: str, custom: dict):
 def get_all() -> List[Dict]:
     """Return all address records."""
     return db.all()
+
+
+def count_records() -> int:
+    """Return the number of address records."""
+    return len(db)

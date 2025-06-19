@@ -1,7 +1,7 @@
 from japanpost_backend.file_fetcher import download_zip
 from japanpost_backend.bulk_register import bulk_register
 from japanpost_backend.diff_applier import apply_add_zip, apply_del_zip
-from japanpost_backend.db_manager import get_all, clear_all
+from japanpost_backend.db_manager import get_all, clear_all, count_records
 from japanpost_backend.search_manager import search_with_filters
 
 
@@ -47,4 +47,8 @@ class Controller:
             return "[OK] 全データを削除しました"
         except Exception as e:
             return f"[ERROR] 全データ削除失敗: {e}"
+
+    def get_record_count(self) -> int:
+        """Return number of records in the database."""
+        return count_records()
 
