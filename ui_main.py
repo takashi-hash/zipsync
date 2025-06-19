@@ -1,7 +1,7 @@
 import sys
 from PySide6.QtWidgets import (
     QMainWindow, QWidget, QListWidget, QStackedWidget, QTextEdit, QLabel,
-    QHBoxLayout, QVBoxLayout, QMessageBox
+    QHBoxLayout, QVBoxLayout, QMessageBox, QToolButton
 )
 from PySide6.QtCore import Qt, QObject, Signal
 from PySide6.QtGui import QStandardItem, QStandardItemModel
@@ -35,10 +35,23 @@ class MainWindow(QMainWindow):
         self.controller = Controller()
 
         # サイドメニュー
+        self.menu_width = 180
         self.menu = QListWidget()
         self.menu.addItems(["一括登録", "差分追加", "差分削除", "全削除", "検索", "履歴"])
-        self.menu.setFixedWidth(180)
+        self.menu.setFixedWidth(self.menu_width)
         self.menu.currentRowChanged.connect(self.switch_page)
+
+        # サイドバー開閉ボタン
+        self.toggle_menu_btn = QToolButton()
+        self.toggle_menu_btn.setArrowType(Qt.LeftArrow)
+        self.toggle_menu_btn.setAutoRaise(True)
+        self.toggle_menu_btn.clicked.connect(self.toggle_menu)
+
+        self.menu_container = QWidget()
+        menu_layout = QVBoxLayout(self.menu_container)
+        menu_layout.setContentsMargins(0, 0, 0, 0)
+        menu_layout.addWidget(self.toggle_menu_btn, alignment=Qt.AlignRight)
+        menu_layout.addWidget(self.menu)
 
         # 各ページを作成
         self.bulk_page = RegisterPage("一括登録", "一括登録 実行")
@@ -75,7 +88,8 @@ class MainWindow(QMainWindow):
         # メイン領域
         container = QWidget()
         hbox = QHBoxLayout(container)
-        hbox.addWidget(self.menu)
+        hbox.setContentsMargins(0, 0, 0, 0)
+        hbox.addWidget(self.menu_container)
         hbox.addWidget(self.stack, 1)
 
         # 出力ログ欄
@@ -83,10 +97,22 @@ class MainWindow(QMainWindow):
         self.output.setReadOnly(True)
         self.output.setFixedHeight(150)
 
+        self.toggle_log_btn = QToolButton()
+        self.toggle_log_btn.setArrowType(Qt.DownArrow)
+        self.toggle_log_btn.setAutoRaise(True)
+        self.toggle_log_btn.clicked.connect(self.toggle_log_output)
+
+        log_header = QWidget()
+        log_header_layout = QHBoxLayout(log_header)
+        log_header_layout.setContentsMargins(0, 0, 0, 0)
+        log_header_layout.addWidget(QLabel("■ 出力ログ"))
+        log_header_layout.addWidget(self.toggle_log_btn)
+        log_header_layout.addStretch()
+
         # 全体レイアウト
         layout = QVBoxLayout()
         layout.addWidget(container)
-        layout.addWidget(QLabel("■ 出力ログ"))
+        layout.addWidget(log_header)
         layout.addWidget(self.output)
 
         central = QWidget()
@@ -104,6 +130,25 @@ class MainWindow(QMainWindow):
     def _append_output(self, text: str):
         if text.strip():
             self.output.append(text.rstrip())
+
+    # --- UI toggle actions ---
+    def toggle_menu(self):
+        if self.menu.isVisible():
+            self.menu.hide()
+            self.menu_container.setFixedWidth(self.toggle_menu_btn.sizeHint().width())
+            self.toggle_menu_btn.setArrowType(Qt.RightArrow)
+        else:
+            self.menu.show()
+            self.menu_container.setFixedWidth(self.menu_width)
+            self.toggle_menu_btn.setArrowType(Qt.LeftArrow)
+
+    def toggle_log_output(self):
+        if self.output.isVisible():
+            self.output.hide()
+            self.toggle_log_btn.setArrowType(Qt.UpArrow)
+        else:
+            self.output.show()
+            self.toggle_log_btn.setArrowType(Qt.DownArrow)
 
 
 
