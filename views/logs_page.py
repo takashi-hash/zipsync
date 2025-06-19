@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QLabel, QHBoxLayout,
-    QPushButton, QTableView
+    QPushButton, QTableView, QMessageBox, QHeaderView
 )
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QStandardItemModel, QStandardItem
@@ -18,7 +18,14 @@ class LogsPage(QWidget):
         ])
         self.table = QTableView()
         self.table.setModel(self.model)
+        header = self.table.horizontalHeader()
+        header.setSectionResizeMode(QHeaderView.ResizeToContents)
+        self.table.setColumnWidth(2, 250)
+        self.table.setColumnWidth(4, 150)
+        self.table.doubleClicked.connect(self._show_details)
         layout.addWidget(self.table, 1)
+
+        self.logs = []
 
         actions = QHBoxLayout()
         self.restore_btn = QPushButton("復元")
@@ -39,3 +46,13 @@ class LogsPage(QWidget):
 
         self.current_page = 1
         self.total_pages = 1
+
+    def _show_details(self, index):
+        row = index.row()
+        if row >= len(self.logs):
+            return
+        log = self.logs[row]
+        details = log.get("details", [])
+        detail_lines = [f"{d.get('zipcode', '')} {d.get('pref', '')} {d.get('town', '')}" for d in details]
+        text = "\n".join(detail_lines) if detail_lines else "(詳細なし)"
+        QMessageBox.information(self, "詳細", text)
