@@ -8,8 +8,8 @@ from PySide6.QtGui import (
     QStandardItemModel,
     QStandardItem,
     QRegularExpressionValidator,
-    QRegularExpression,
 )
+from PySide6.QtCore import QRegularExpression
 
 
 class MainWindow(QMainWindow):
