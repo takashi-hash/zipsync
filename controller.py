@@ -4,8 +4,10 @@ from japanpost_backend.diff_applier import (
     apply_add_zip, apply_del_zip,
 )
 from japanpost_backend.reapply_patch import reapply_log_entry
-from japanpost_backend.db_manager import get_all, clear_all, count_records
-from japanpost_backend.db_manager import update_custom
+from japanpost_backend.db_manager import (
+    get_all, clear_all, count_records,
+    update_custom, get_by_zipcode,
+)
 from japanpost_backend.search_manager import search_with_filters
 from japanpost_backend.log_manager import get_logs, delete_log
 from japanpost_backend.reverse_patch import reverse_log_entry
@@ -59,6 +61,10 @@ class Controller:
         """Return number of records in the database."""
         return count_records()
 
+    def get_record(self, zipcode: str):
+        """Return a single record by zipcode or None."""
+        return get_by_zipcode(zipcode)
+
     # --- log handling ---
     def fetch_logs(self, page: int = 1, per_page: int = 30):
         """Return paginated import logs and total count."""
@@ -87,4 +93,10 @@ class Controller:
         for zc in zipcodes:
             update_custom(zc, custom)
         return f"[OK] カスタム項目を更新しました ({len(zipcodes)} 件)"
+
+    def update_custom_map(self, mapping):
+        """Apply different custom dicts for multiple records."""
+        for zc, custom in mapping.items():
+            update_custom(zc, custom)
+        return f"[OK] カスタム項目を更新しました ({len(mapping)} 件)"
 
