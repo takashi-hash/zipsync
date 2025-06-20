@@ -34,3 +34,23 @@ def test_db_operations_and_search(temp_env):
 
     db_manager.clear_all()
     assert db_manager.count_records() == 0
+
+
+def test_search_multiple(temp_env):
+    env = temp_env
+    db_manager = env["reload"]("japanpost_backend.db_manager")
+    search_manager = env["reload"]("japanpost_backend.search_manager")
+    models = env["reload"]("japanpost_backend.models")
+
+    records = sample_records(models)
+    db_manager.insert_all(records)
+
+    filters = [
+        {"zipcode": "1000001"},
+        {"town": "二番町"},
+    ]
+
+    results, total = search_manager.search_multiple(filters)
+    assert total == 2
+    towns = sorted([r["town"] for r in results])
+    assert towns == ["一番町", "二番町"]

@@ -205,12 +205,9 @@ class MainWindow(QMainWindow):
 
     # --- 検索関連処理 ---
     def perform_search(self, page: int = 1):
-        zipcode = self.search_page.zip_input.text().strip()
-        pref = self.search_page.pref_input.text().strip()
-        city = self.search_page.city_input.text().strip()
-        town = self.search_page.town_input.text().strip()
+        filters = self.search_page.get_filters()
         records, total = self.controller.search_addresses(
-            zipcode, pref, city, town, page, per_page=30)
+            page=page, per_page=30, filters=filters)
 
         self.search_page.model.removeRows(0, self.search_page.model.rowCount())
         for zipcode, pref, city, town in records:

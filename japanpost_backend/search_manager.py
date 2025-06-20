@@ -49,3 +49,28 @@ def search_with_filters(
     start = max(page - 1, 0) * per_page
     end = start + per_page
     return matched[start:end], total
+
+
+def search_multiple(filters: List[Dict], page: int = 1, per_page: int = 30) -> Tuple[List[Dict], int]:
+    """Search using multiple sets of filters and return combined results."""
+    combined = []
+    for f in filters:
+        z = f.get("zipcode", "")
+        p = f.get("pref", "")
+        c = f.get("city", "")
+        t = f.get("town", "")
+        results, _ = search_with_filters(z, p, c, t, page=1, per_page=len(db))
+        combined.extend(results)
+
+    unique = []
+    seen = set()
+    for r in combined:
+        key = (r.get("zipcode"), r.get("pref"), r.get("city"), r.get("town"))
+        if key not in seen:
+            seen.add(key)
+            unique.append(r)
+
+    total = len(unique)
+    start = max(page - 1, 0) * per_page
+    end = start + per_page
+    return unique[start:end], total

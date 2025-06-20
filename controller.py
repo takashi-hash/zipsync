@@ -8,7 +8,7 @@ from japanpost_backend.db_manager import (
     get_all, clear_all, count_records,
     update_custom, get_by_zipcode,
 )
-from japanpost_backend.search_manager import search_with_filters
+from japanpost_backend.search_manager import search_with_filters, search_multiple
 from japanpost_backend.log_manager import get_logs, delete_log
 from japanpost_backend.reverse_patch import reverse_log_entry
 
@@ -43,9 +43,13 @@ class Controller:
         return [(r["zipcode"], r["pref"], r["city"], r["town"]) for r in records]
 
     def search_addresses(self, zipcode: str = "", pref: str = "", city: str = "",
-                         town: str = "", page: int = 1, per_page: int = 30):
-        results, total = search_with_filters(zipcode, pref, city, town,
-                                            page, per_page)
+                         town: str = "", page: int = 1, per_page: int = 30,
+                         filters=None):
+        if filters is not None:
+            results, total = search_multiple(filters, page, per_page)
+        else:
+            results, total = search_with_filters(zipcode, pref, city, town,
+                                                page, per_page)
         data = [(r["zipcode"], r["pref"], r["city"], r["town"]) for r in results]
         return data, total
 

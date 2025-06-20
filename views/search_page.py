@@ -12,24 +12,21 @@ class SearchPage(QWidget):
         layout = QVBoxLayout(self)
         layout.addWidget(QLabel("詳細検索"))
 
-        form = QHBoxLayout()
-        self.zip_input = QLineEdit()
-        self.zip_input.setPlaceholderText("郵便番号")
-        self.zip_input.setMaxLength(7)
-        regex = QRegularExpression(r"\d{0,7}")
-        self.zip_input.setValidator(QRegularExpressionValidator(regex))
-        self.pref_input = QLineEdit()
-        self.pref_input.setPlaceholderText("都道府県")
-        self.city_input = QLineEdit()
-        self.city_input.setPlaceholderText("市区町村")
-        self.town_input = QLineEdit()
-        self.town_input.setPlaceholderText("町域")
-        self.search_btn = QPushButton("検索")
+        self.form_container = QVBoxLayout()
+        layout.addLayout(self.form_container)
 
-        for w in [self.zip_input, self.pref_input, self.city_input,
-                  self.town_input, self.search_btn]:
-            form.addWidget(w)
-        layout.addLayout(form)
+        self.rows = []
+        self._add_row()
+
+        add_row_area = QHBoxLayout()
+        self.add_row_btn = QPushButton("＋ 条件追加")
+        self.add_row_btn.clicked.connect(self._add_row)
+        add_row_area.addWidget(self.add_row_btn)
+        add_row_area.addStretch()
+        layout.addLayout(add_row_area)
+
+        self.search_btn = QPushButton("検索")
+        layout.addWidget(self.search_btn)
 
         self.table = QTableView()
         self.table.setSelectionBehavior(QAbstractItemView.SelectRows)
@@ -59,6 +56,65 @@ class SearchPage(QWidget):
 
         self.current_page = 1
         self.total_pages = 1
+
+    def _create_row(self):
+        row = {}
+        layout = QHBoxLayout()
+        row["layout"] = layout
+        row["zip"] = QLineEdit()
+        row["zip"].setPlaceholderText("郵便番号")
+        row["zip"].setMaxLength(7)
+        regex = QRegularExpression(r"\d{0,7}")
+        row["zip"].setValidator(QRegularExpressionValidator(regex))
+        row["pref"] = QLineEdit()
+        row["pref"].setPlaceholderText("都道府県")
+        row["city"] = QLineEdit()
+        row["city"].setPlaceholderText("市区町村")
+        row["town"] = QLineEdit()
+        row["town"].setPlaceholderText("町域")
+        row["remove"] = QPushButton("－")
+        row["remove"].clicked.connect(lambda: self._remove_row(row))
+        for w in [row["zip"], row["pref"], row["city"], row["town"], row["remove"]]:
+            layout.addWidget(w)
+        return row
+
+    def _add_row(self):
+        row = self._create_row()
+        self.rows.append(row)
+        self.form_container.addLayout(row["layout"])
+        self._update_remove_buttons()
+
+    def _remove_row(self, row):
+        if row not in self.rows:
+            return
+        self.rows.remove(row)
+        while row["layout"].count():
+            item = row["layout"].takeAt(0)
+            widget = item.widget()
+            if widget:
+                widget.setParent(None)
+        self.form_container.removeItem(row["layout"])
+        self._update_remove_buttons()
+
+    def _update_remove_buttons(self):
+        enable = len(self.rows) > 1
+        for r in self.rows:
+            r["remove"].setEnabled(enable)
+
+    def get_filters(self):
+        filters = []
+        for r in self.rows:
+            data = {
+                "zipcode": r["zip"].text().strip(),
+                "pref": r["pref"].text().strip(),
+                "city": r["city"].text().strip(),
+                "town": r["town"].text().strip(),
+            }
+            if any(data.values()):
+                filters.append(data)
+        if not filters:
+            filters.append({"zipcode": "", "pref": "", "city": "", "town": ""})
+        return filters
 
     def _update_button_state(self, *args):
         selected = bool(self.table.selectionModel().selectedRows())
