@@ -245,8 +245,12 @@ class MainWindow(QMainWindow):
         selected = self.search_page.selected_zipcodes()
         if not selected:
             return
+        records = {}
+        for zc in selected:
+            rec = self.controller.get_record(zc)
+            records[zc] = rec.get("custom", {}) if rec else {}
         self._pending_zipcodes = selected
-        self.custom_page.tree.clear()
+        self.custom_page.setup_records(records)
         self.stack.setCurrentWidget(self.custom_page)
 
     def _custom_page_accepted(self, data):
@@ -257,7 +261,7 @@ class MainWindow(QMainWindow):
             QMessageBox.Yes | QMessageBox.No,
         )
         if reply == QMessageBox.Yes:
-            msg = self.controller.update_custom_fields(self._pending_zipcodes, data)
+            msg = self.controller.update_custom_map(data)
             self.output.append(msg)
             self.perform_search(self.current_page)
         self.stack.setCurrentWidget(self.search_page)

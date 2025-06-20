@@ -14,7 +14,18 @@ class CustomEditPage(QWidget):
     def __init__(self):
         super().__init__()
         layout = QVBoxLayout(self)
-        layout.addWidget(QLabel("カスタム項目追加"))
+        self.header_label = QLabel("カスタム項目追加")
+        layout.addWidget(self.header_label)
+
+        nav = QHBoxLayout()
+        self.prev_btn = QPushButton("前へ")
+        self.next_btn = QPushButton("次へ")
+        self.record_label = QLabel("")
+        nav.addWidget(self.prev_btn)
+        nav.addWidget(self.next_btn)
+        nav.addWidget(self.record_label)
+        nav.addStretch()
+        layout.addLayout(nav)
 
         self.tree = QTreeWidget()
         self.tree.setColumnCount(2)
@@ -44,6 +55,77 @@ class CustomEditPage(QWidget):
         self.remove_btn.clicked.connect(self.remove_item)
         self.ok_btn.clicked.connect(self._emit_accept)
         self.cancel_btn.clicked.connect(self.cancelled.emit)
+        self.prev_btn.clicked.connect(lambda: self._navigate(-1))
+        self.next_btn.clicked.connect(lambda: self._navigate(1))
+
+        self._records = {}
+        self._order = []
+        self._index = 0
+
+    # --- navigation helpers ---
+    def _navigate(self, step: int):
+        if not self._order:
+            return
+        self._save_current()
+        self._index = max(0, min(len(self._order) - 1, self._index + step))
+        self._load_current()
+        self._update_nav()
+
+    def _load_current(self):
+        self.tree.clear()
+        if not self._order:
+            self.record_label.setText("")
+            return
+        zc = self._order[self._index]
+        data = self._records.get(zc, {})
+        self.record_label.setText(f"{self._index + 1}/{len(self._order)} {zc}")
+        self._populate_tree(data)
+
+    def _save_current(self):
+        if not self._order:
+            return
+        zc = self._order[self._index]
+        self._records[zc] = self.get_data()
+
+    def _update_nav(self):
+        self.prev_btn.setEnabled(self._index > 0)
+        self.next_btn.setEnabled(self._index < len(self._order) - 1)
+
+    def _populate_tree(self, data):
+        def add_items(parent, d):
+            if isinstance(d, dict):
+                for k, v in d.items():
+                    if isinstance(v, list):
+                        for item in v:
+                            child = QTreeWidgetItem([k, ""])
+                            child.setFlags(child.flags() | Qt.ItemIsEditable)
+                            add_items(child, item)
+                            parent.addChild(child)
+                    else:
+                        child = QTreeWidgetItem([k, ""] if isinstance(v, dict) else [k, str(v)])
+                        child.setFlags(child.flags() | Qt.ItemIsEditable)
+                        if isinstance(v, dict):
+                            add_items(child, v)
+                        parent.addChild(child)
+            else:
+                # not expected
+                pass
+
+        for k, v in (data or {}).items():
+            item = QTreeWidgetItem([k, ""] if isinstance(v, dict) else [k, str(v)])
+            item.setFlags(item.flags() | Qt.ItemIsEditable)
+            if isinstance(v, dict):
+                add_items(item, v)
+            self.tree.addTopLevelItem(item)
+
+    # --- public API ---
+    def setup_records(self, records: dict):
+        """Initialize page with mapping {zipcode: custom_dict}."""
+        self._records = records
+        self._order = list(records.keys())
+        self._index = 0
+        self._load_current()
+        self._update_nav()
 
     # --- button handlers ---
     def add_root_item(self):
@@ -73,7 +155,8 @@ class CustomEditPage(QWidget):
                 self.tree.takeTopLevelItem(idx)
 
     def _emit_accept(self):
-        self.accepted.emit(self.get_data())
+        self._save_current()
+        self.accepted.emit(self._records)
 
     # --- data retrieval ---
     def get_data(self):
