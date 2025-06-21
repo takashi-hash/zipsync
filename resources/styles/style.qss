@@ -1,33 +1,51 @@
 QWidget {
-    background-color: #FAFAFA;
+    background-color: #EDF2FB;
     color: #333333;
     font-family: "Inter";
     font-size: 14pt;
 }
 
 QLabel#pageTitle {
-    font-size: 24pt;
+    font-size: 28pt;
     font-weight: bold;
     color: #333333;
 }
 
-QPushButton#primaryButton {
-    background-color: #2196F3;
-    color: white;
+QPushButton {
+    min-height: 32px;
     padding: 6px 12px;
     border-radius: 4px;
+}
+
+QPushButton#primaryButton {
+    background-color: #ABC4FF;
+    color: #333333;
+}
+QPushButton#primaryButton:hover {
+    background-color: #C1D3FE;
+}
+QPushButton#primaryButton:pressed {
+    background-color: #90CAF9;
 }
 
 QPushButton#secondaryButton {
-    background-color: #E0E0E0;
+    background-color: #FFE5EC;
     color: #333333;
-    padding: 6px 12px;
-    border-radius: 4px;
+}
+QPushButton#secondaryButton:hover {
+    background-color: #FFC2D1;
+}
+QPushButton#secondaryButton:pressed {
+    background-color: #FF8FAB;
 }
 
 QPushButton#dangerButton {
-    background-color: #F44336;
+    background-color: #FF8FAB;
     color: white;
-    padding: 6px 12px;
-    border-radius: 4px;
+}
+QPushButton#dangerButton:hover {
+    background-color: #FF6B9A;
+}
+QPushButton#dangerButton:pressed {
+    background-color: #E05379;
 }
