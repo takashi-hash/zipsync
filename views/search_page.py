@@ -18,7 +18,6 @@ class SearchPage(QWidget):
         layout.addLayout(self.form_container)
 
         self.rows = []
-        self._add_row()
 
         add_row_area = QHBoxLayout()
         self.add_row_btn = QPushButton("＋ 条件追加")
@@ -26,6 +25,8 @@ class SearchPage(QWidget):
         add_row_area.addWidget(self.add_row_btn)
         add_row_area.addStretch()
         layout.addLayout(add_row_area)
+
+        self._add_row()
         self._update_add_button()
 
         self.search_btn = QPushButton("検索")
