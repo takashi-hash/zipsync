@@ -248,7 +248,15 @@ class MainWindow(QMainWindow):
         records = {}
         for zc in selected:
             rec = self.controller.get_record(zc)
-            records[zc] = rec.get("custom", {}) if rec else {}
+            if rec:
+                records[zc] = {
+                    "pref": rec.get("pref", ""),
+                    "city": rec.get("city", ""),
+                    "town": rec.get("town", ""),
+                    "custom": rec.get("custom", {}),
+                }
+            else:
+                records[zc] = {"pref": "", "city": "", "town": "", "custom": {}}
         self._pending_zipcodes = selected
         self.custom_page.setup_records(records)
         self.stack.setCurrentWidget(self.custom_page)

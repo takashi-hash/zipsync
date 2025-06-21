@@ -23,10 +23,20 @@ class CustomEditPage(QWidget):
         nav = QHBoxLayout()
         self.prev_btn = QPushButton("前へ")
         self.next_btn = QPushButton("次へ")
-        self.record_label = QLabel("")
+        info_widget = QWidget()
+        info_layout = QVBoxLayout(info_widget)
+        info_layout.setContentsMargins(0, 0, 0, 0)
+        self.index_label = QLabel("")
+        self.zip_label = QLabel("")
+        self.pref_label = QLabel("")
+        self.city_label = QLabel("")
+        self.town_label = QLabel("")
+        for w in [self.index_label, self.zip_label, self.pref_label,
+                  self.city_label, self.town_label]:
+            info_layout.addWidget(w)
         nav.addWidget(self.prev_btn)
+        nav.addWidget(info_widget)
         nav.addWidget(self.next_btn)
-        nav.addWidget(self.record_label)
         nav.addStretch()
         layout.addLayout(nav)
 
@@ -36,22 +46,24 @@ class CustomEditPage(QWidget):
         layout.addWidget(self.tree)
 
         btns = QHBoxLayout()
+        btns.setAlignment(Qt.AlignCenter)
         self.add_btn = QPushButton("＋")
-        self.add_child_btn = QPushButton("＋子")
         self.remove_btn = QPushButton("－")
-        btns.addWidget(self.add_btn)
-        btns.addWidget(self.add_child_btn)
-        btns.addWidget(self.remove_btn)
-        btns.addStretch()
+        self.add_child_btn = QPushButton("子要素を追加")
+        self.cancel_btn = QPushButton("キャンセル")
+        self.ok_btn = QPushButton("決定")
+        for b in [self.add_btn, self.remove_btn, self.add_child_btn,
+                  self.cancel_btn, self.ok_btn]:
+            btns.addWidget(b)
         layout.addLayout(btns)
 
-        action = QHBoxLayout()
-        self.ok_btn = QPushButton("決定")
-        self.cancel_btn = QPushButton("キャンセル")
-        action.addWidget(self.ok_btn)
-        action.addWidget(self.cancel_btn)
-        action.addStretch()
-        layout.addLayout(action)
+        # unify button widths
+        width = max(b.sizeHint().width() for b in [self.add_btn, self.remove_btn,
+                                                   self.add_child_btn,
+                                                   self.cancel_btn, self.ok_btn])
+        for b in [self.add_btn, self.remove_btn, self.add_child_btn,
+                  self.cancel_btn, self.ok_btn]:
+            b.setFixedWidth(width)
 
         self.add_btn.clicked.connect(self.add_root_item)
         self.add_child_btn.clicked.connect(self.add_child_item)
@@ -62,6 +74,7 @@ class CustomEditPage(QWidget):
         self.next_btn.clicked.connect(lambda: self._navigate(1))
 
         self._records = {}
+        self._info = {}
         self._order = []
         self._index = 0
 
@@ -77,11 +90,19 @@ class CustomEditPage(QWidget):
     def _load_current(self):
         self.tree.clear()
         if not self._order:
-            self.record_label.setText("")
+            for lbl in [self.index_label, self.zip_label, self.pref_label,
+                        self.city_label, self.town_label]:
+                lbl.setText("")
             return
         zc = self._order[self._index]
+        info = self._info.get(zc, {})
         data = self._records.get(zc, {})
-        self.record_label.setText(f"{self._index + 1}/{len(self._order)} {zc}")
+        self.index_label.setText(
+            f"現在表示中({self._index + 1}/{len(self._order)})")
+        self.zip_label.setText(f"郵便番号: {zc}")
+        self.pref_label.setText(f"都道府県: {info.get('pref', '')}")
+        self.city_label.setText(f"市区町村: {info.get('city', '')}")
+        self.town_label.setText(f"町域: {info.get('town', '')}")
         self._populate_tree(data)
 
     def _save_current(self):
@@ -123,8 +144,17 @@ class CustomEditPage(QWidget):
 
     # --- public API ---
     def setup_records(self, records: dict):
-        """Initialize page with mapping {zipcode: custom_dict}."""
-        self._records = records
+        """Initialize page with mapping
+        {zipcode: {pref:str, city:str, town:str, custom:dict}}."""
+        self._info = {}
+        self._records = {}
+        for zc, rec in records.items():
+            self._info[zc] = {
+                "pref": rec.get("pref", ""),
+                "city": rec.get("city", ""),
+                "town": rec.get("town", ""),
+            }
+            self._records[zc] = rec.get("custom", {})
         self._order = list(records.keys())
         self._index = 0
         self._load_current()
