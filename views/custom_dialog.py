@@ -5,10 +5,10 @@ from PySide6.QtWidgets import (
     QTreeWidgetItem, QLabel
 )
 from PySide6.QtCore import Qt
-class CustomEditDialog(QDialog):
-    """ネストしたカスタムデータを入力するダイアログ"""
+
 
 class CustomEditDialog(QDialog):
+    """ネストしたカスタムデータを入力するダイアログ"""
     """Dialog to input nested custom data."""
 
     def __init__(self, parent=None):
