@@ -12,7 +12,7 @@ class JsonDataPage(QWidget):
         layout = QVBoxLayout(self)
         layout.setContentsMargins(16, 16, 16, 16)
 
-        title = QLabel("🔄 データの保存・復元")
+        title = QLabel("データの保存・復元")
         title.setObjectName("pageTitle")
         layout.addWidget(title)
 

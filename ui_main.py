@@ -3,7 +3,7 @@
 import sys
 from PySide6.QtWidgets import (
     QMainWindow, QWidget, QListWidget, QStackedWidget, QTextEdit, QLabel,
-    QHBoxLayout, QVBoxLayout, QMessageBox, QToolButton, QFileDialog
+    QHBoxLayout, QVBoxLayout, QMessageBox, QToolButton, QFileDialog, QSizePolicy
 )
 from PySide6.QtCore import Qt, QObject, Signal
 from PySide6.QtGui import QStandardItem, QStandardItemModel
@@ -56,15 +56,16 @@ class MainWindow(QMainWindow):
 
         # サイドバー開閉ボタン
         self.toggle_menu_btn = QToolButton()
-        self.toggle_menu_btn.setObjectName("menuToggleButton")
+        self.toggle_menu_btn.setObjectName("secondaryButton")
         self.toggle_menu_btn.setArrowType(Qt.LeftArrow)
         self.toggle_menu_btn.setAutoRaise(False)
+        self.toggle_menu_btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.toggle_menu_btn.clicked.connect(self.toggle_menu)
 
         self.menu_container = QWidget()
         menu_layout = QVBoxLayout(self.menu_container)
         menu_layout.setContentsMargins(0, 10, 0, 10)
-        menu_layout.addWidget(self.toggle_menu_btn, alignment=Qt.AlignRight)
+        menu_layout.addWidget(self.toggle_menu_btn)
         menu_layout.addWidget(self.menu)
 
         # 各ページを作成
@@ -73,7 +74,7 @@ class MainWindow(QMainWindow):
             "新規または再登録します。"
         )
         self.bulk_page = RegisterPage(
-            "📦 全住所データの初期登録",
+            "全住所データの初期登録",
             "一括登録 実行",
             instructions=bulk_info,
         )
@@ -82,7 +83,7 @@ class MainWindow(QMainWindow):
             "日本郵便が月次で公開する追加データ（utf_add_YYMM.zip）を既存データに加えます。"
         )
         self.add_page = RegisterPage(
-            "➕ 更新データの追加登録（新住所）",
+            "更新データの追加登録（新住所）",
             "差分追加 実行",
             instructions=add_info,
         )
@@ -91,7 +92,7 @@ class MainWindow(QMainWindow):
             "日本郵便の削除データ（utf_del_YYMM.zip）に基づいて、該当の住所を論理削除します。"
         )
         self.del_page = RegisterPage(
-            "➖ 更新データによる削除（削除済住所）",
+            "更新データによる削除（削除済住所）",
             "差分削除 実行",
             instructions=del_info,
         )
@@ -142,20 +143,21 @@ class MainWindow(QMainWindow):
 
         # 出力ログ欄
         self.output = QTextEdit()
+        self.output.setObjectName("logOutput")
         self.output.setReadOnly(True)
         self.output.setFixedHeight(150)
 
         self.toggle_log_btn = QToolButton()
+        self.toggle_log_btn.setObjectName("secondaryButton")
         self.toggle_log_btn.setArrowType(Qt.DownArrow)
-        self.toggle_log_btn.setAutoRaise(True)
+        self.toggle_log_btn.setAutoRaise(False)
+        self.toggle_log_btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.toggle_log_btn.clicked.connect(self.toggle_log_output)
 
         log_header = QWidget()
         log_header_layout = QHBoxLayout(log_header)
         log_header_layout.setContentsMargins(0, 0, 0, 0)
-        log_header_layout.addWidget(QLabel("■ 出力ログ"))
         log_header_layout.addWidget(self.toggle_log_btn)
-        log_header_layout.addStretch()
 
         # 全体レイアウト
         layout = QVBoxLayout()

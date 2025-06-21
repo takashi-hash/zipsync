@@ -9,7 +9,7 @@ class ClearPage(QWidget):
         super().__init__()
         layout = QVBoxLayout(self)
         layout.setContentsMargins(16, 16, 16, 16)
-        title = QLabel("🧹 住所データの全削除")
+        title = QLabel("住所データの全削除")
         title.setObjectName("pageTitle")
         layout.addWidget(title)
 
