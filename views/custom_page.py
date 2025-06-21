@@ -17,6 +17,7 @@ class CustomEditPage(QWidget):
     def __init__(self):
         super().__init__()
         layout = QVBoxLayout(self)
+        layout.setContentsMargins(16, 16, 16, 16)
         self.header_label = QLabel("カスタム項目追加")
         self.header_label.setObjectName("pageTitle")
         layout.addWidget(self.header_label)

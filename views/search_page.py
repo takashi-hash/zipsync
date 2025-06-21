@@ -12,6 +12,7 @@ class SearchPage(QWidget):
     def __init__(self):
         super().__init__()
         layout = QVBoxLayout(self)
+        layout.setContentsMargins(16, 16, 16, 16)
         title = QLabel("詳細検索")
         title.setObjectName("pageTitle")
         layout.addWidget(title)
