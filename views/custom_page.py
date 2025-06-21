@@ -65,14 +65,6 @@ class CustomEditPage(QWidget):
             btns.addWidget(b)
         layout.addLayout(btns)
 
-        # unify button widths
-        width = max(b.sizeHint().width() for b in [self.add_btn, self.remove_btn,
-                                                   self.add_child_btn,
-                                                   self.cancel_btn, self.ok_btn])
-        for b in [self.add_btn, self.remove_btn, self.add_child_btn,
-                  self.cancel_btn, self.ok_btn]:
-            b.setFixedWidth(width)
-
         self.add_btn.clicked.connect(self.add_root_item)
         self.add_child_btn.clicked.connect(self.add_child_item)
         self.remove_btn.clicked.connect(self.remove_item)

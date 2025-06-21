@@ -6,8 +6,10 @@ from PySide6.QtWidgets import (
     QLabel,
     QLineEdit,
     QPushButton,
+    QSizePolicy,
 )
 from PySide6.QtGui import QFont, QIcon
+from PySide6.QtCore import Qt
 
 
 class RegisterPage(QWidget):
@@ -39,7 +41,8 @@ class RegisterPage(QWidget):
         self.run_button.setIcon(QIcon.fromTheme(icon_name))
         self.run_button.setFont(input_font)
         self.run_button.setFixedHeight(40)
-        layout.addWidget(self.run_button)
+        self.run_button.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        layout.addWidget(self.run_button, alignment=Qt.AlignCenter)
 
         layout.addStretch()
 
