@@ -31,6 +31,12 @@ class RegisterPage(QWidget):
         title.setFont(title_font)
         layout.addWidget(title)
 
+        if instructions:
+            info = QLabel(instructions)
+            info.setWordWrap(True)
+            info.setStyleSheet("color: gray;")
+            layout.addWidget(info)
+
         input_font = QFont()
         input_font.setPointSize(self.url_input.font().pointSize() + 2)
         self.url_input.setFont(input_font)
@@ -46,9 +52,3 @@ class RegisterPage(QWidget):
         layout.addWidget(self.run_button, alignment=Qt.AlignCenter)
 
         layout.addStretch()
-
-        if instructions:
-            info = QLabel(instructions)
-            info.setWordWrap(True)
-            info.setStyleSheet("color: gray;")
-            layout.addWidget(info)

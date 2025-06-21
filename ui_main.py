@@ -65,8 +65,12 @@ class MainWindow(QMainWindow):
             "既存データは削除され、新しいデータで置き換わります。"
         )
         self.bulk_page = RegisterPage("一括登録", "一括登録 実行", instructions=bulk_info)
-        self.add_page = RegisterPage("差分追加", "差分追加 実行")
-        self.del_page = RegisterPage("差分削除", "差分削除 実行")
+
+        add_info = "日本郵便サイトの『utf_add_YYMM.zip』URLを入力し実行してください。"
+        self.add_page = RegisterPage("差分追加", "差分追加 実行", instructions=add_info)
+
+        del_info = "日本郵便サイトの『utf_del_YYMM.zip』URLを入力し実行してください。"
+        self.del_page = RegisterPage("差分削除", "差分削除 実行", instructions=del_info)
         self.clear_page = ClearPage()
         self.search_page = SearchPage()
         self.logs_page = LogsPage()
