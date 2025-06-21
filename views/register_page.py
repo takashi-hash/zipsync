@@ -22,8 +22,9 @@ class RegisterPage(QWidget):
         layout = QVBoxLayout(self)
 
         title = QLabel(f"{label}用 URL")
+        title.setObjectName("pageTitle")
         title_font = QFont()
-        title_font.setPointSize(title.font().pointSize() + 2)
+        title_font.setPointSize(24)
         title.setFont(title_font)
         layout.addWidget(title)
 
@@ -34,6 +35,7 @@ class RegisterPage(QWidget):
         layout.addWidget(self.url_input)
 
         self.run_button = QPushButton(button_label)
+        self.run_button.setObjectName("primaryButton")
         self.run_button.setIcon(QIcon.fromTheme(icon_name))
         self.run_button.setFont(input_font)
         self.run_button.setFixedHeight(40)
