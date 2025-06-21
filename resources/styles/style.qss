@@ -11,6 +11,7 @@ QLabel#pageTitle {
     font-weight: 700;
     color: #1A1A1A;
     padding: 12px 0;
+    margin-bottom: 12px;
 }
 
 /* 共通ボタンベース */
@@ -59,6 +60,13 @@ QPushButton#dangerButton:pressed {
     background-color: #D62A4D;
 }
 
+QLineEdit {
+    background-color: #FFFFFF;
+    padding: 4px;
+    border: 1px solid #D0D7E2;
+    border-radius: 4px;
+}
+
 /* テーブルビュー */
 QTableView {
     background-color: #FFFFFF;
@@ -83,4 +91,14 @@ QToolButton#menuToggleButton {
     border-radius: 4px;
     background-color: transparent;
     padding: 2px;
+}
+
+QListWidget::item {
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+QTableView::item:selected {
+    background-color: #D6E4FF;
+    color: #1A1A1A;
 }

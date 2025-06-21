@@ -12,6 +12,12 @@ class ClearPage(QWidget):
         title = QLabel("登録データを全て削除")
         title.setObjectName("pageTitle")
         layout.addWidget(title)
+
+        info = QLabel("登録済みの住所データを全て削除します。")
+        info.setWordWrap(True)
+        info.setStyleSheet("color: gray;")
+        layout.addWidget(info)
+
         self.run_button = QPushButton("全削除 実行")
         self.run_button.setObjectName("dangerButton")
         self.run_button.setFixedHeight(40)
