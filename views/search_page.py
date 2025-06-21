@@ -22,22 +22,40 @@ class SearchPage(QWidget):
 
         self.rows = []
 
-        add_row_area = QHBoxLayout()
+        # 条件追加ボタンと検索ボタンを横並びで中央配置
+        controls = QHBoxLayout()
         self.add_row_btn = QPushButton("＋ 条件追加")
         self.add_row_btn.setObjectName("secondaryButton")
         self.add_row_btn.clicked.connect(self._add_row)
-        add_row_area.addWidget(self.add_row_btn)
-        add_row_area.addStretch()
-        layout.addLayout(add_row_area)
-
-        self._add_row()
-        self._update_add_button()
-
         self.search_btn = QPushButton("検索")
         self.search_btn.setObjectName("primaryButton")
         self.search_btn.setFixedHeight(40)
         self.search_btn.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        layout.addWidget(self.search_btn, alignment=Qt.AlignCenter)
+        # 横幅を揃える
+        button_width = 120
+        self.add_row_btn.setFixedWidth(button_width)
+        self.search_btn.setFixedWidth(button_width)
+        controls.addStretch()
+        controls.addWidget(self.add_row_btn)
+        controls.addSpacing(12)
+        controls.addWidget(self.search_btn)
+        controls.addStretch()
+        layout.addLayout(controls)
+
+        self._add_row()
+        self._update_add_button()
+
+        # ページネーション
+        pager = QHBoxLayout()
+        self.prev_btn = QPushButton("前へ")
+        self.prev_btn.setObjectName("secondaryButton")
+        self.next_btn = QPushButton("次へ")
+        self.next_btn.setObjectName("secondaryButton")
+        self.page_label = QLabel("1 / 1")
+        for w in [self.prev_btn, self.page_label, self.next_btn]:
+            pager.addWidget(w)
+        pager.addStretch()
+        layout.addLayout(pager)
 
         self.table = QTableView()
         self.table.setSelectionBehavior(QAbstractItemView.SelectRows)
@@ -58,17 +76,6 @@ class SearchPage(QWidget):
         self.model.setHorizontalHeaderLabels(["郵便番号", "都道府県", "市区町村", "町域"])
         self.table.setModel(self.model)
         self.table.selectionModel().selectionChanged.connect(self._update_button_state)
-
-        pager = QHBoxLayout()
-        self.prev_btn = QPushButton("前へ")
-        self.prev_btn.setObjectName("secondaryButton")
-        self.next_btn = QPushButton("次へ")
-        self.next_btn.setObjectName("secondaryButton")
-        self.page_label = QLabel("1 / 1")
-        for w in [self.prev_btn, self.page_label, self.next_btn]:
-            pager.addWidget(w)
-        pager.addStretch()
-        layout.addLayout(pager)
 
         self.current_page = 1
         self.total_pages = 1
