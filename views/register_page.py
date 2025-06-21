@@ -24,7 +24,7 @@ class RegisterPage(QWidget):
         layout = QVBoxLayout(self)
         layout.setContentsMargins(16, 16, 16, 16)
 
-        title = QLabel(f"{label}用 URL")
+        title = QLabel(label)
         title.setObjectName("pageTitle")
         title_font = QFont()
         title_font.setPointSize(24)
