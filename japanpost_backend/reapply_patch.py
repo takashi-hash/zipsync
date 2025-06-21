@@ -1,3 +1,5 @@
+# 履歴の再適用を行う
+
 import os
 from typing import Literal
 from .file_fetcher import download_zip
@@ -11,7 +13,7 @@ RESOURCE_DIR = "resources"
 
 
 def reapply_log_entry(index: int) -> str:
-    """Reapply the import corresponding to a log entry without creating logs."""
+    """履歴エントリを再適用（ログは残さない）"""
     logs = load_logs()
     if index < 0 or index >= len(logs):
         return f"[ERROR] 指定インデックスが無効: {index}"

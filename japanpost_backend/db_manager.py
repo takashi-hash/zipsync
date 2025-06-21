@@ -1,3 +1,4 @@
+# TinyDB を用いたデータベース操作モジュール
 from tinydb import TinyDB, Query
 from typing import List, Dict
 import os
@@ -13,36 +14,36 @@ Address = Query()
 
 
 def insert_all(records):
-    """Insert multiple address records."""
+    """住所レコードをまとめて挿入"""
     db.insert_multiple(records)
 
 
 def clear_all():
-    """Remove all records from the database."""
+    """データベースを空にする"""
     db.truncate()
 
 
 def remove_by_zipcode(zipcode: str):
-    """Delete record matching the given zip code."""
+    """郵便番号に一致するレコードを削除"""
     db.remove(Address.zipcode == zipcode)
 
 
 def update_custom(zipcode: str, custom: dict):
-    """Update custom data for a record."""
+    """カスタムデータを更新"""
     db.update({"custom": custom}, Address.zipcode == zipcode)
 
 
 def get_all() -> List[Dict]:
-    """Return all address records."""
+    """全レコードを取得"""
     return db.all()
 
 
 def get_by_zipcode(zipcode: str) -> Dict:
-    """Return first record matching the zip code or None."""
+    """郵便番号で検索し最初のレコードを返す"""
     result = db.search(Address.zipcode == zipcode)
     return result[0] if result else None
 
 
 def count_records() -> int:
-    """Return the number of address records."""
+    """登録件数を返す"""
     return len(db)

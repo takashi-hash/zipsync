@@ -1,3 +1,5 @@
+# ZIP 内の CSV を読み込むヘルパー
+
 import zipfile
 import csv
 import io
@@ -5,6 +7,7 @@ from .models import create_address_entry
 
 
 def load_csv_from_zip(zip_path: str) -> list:
+    """ZIP ファイルから CSV を読み込んでレコードを生成"""
     with zipfile.ZipFile(zip_path, 'r') as z:
         csv_file = z.namelist()[0]
         with z.open(csv_file) as f:

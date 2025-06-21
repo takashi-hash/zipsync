@@ -1,3 +1,5 @@
+# 取込履歴を表示するページ
+
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QLabel, QHBoxLayout,
     QPushButton, QTableView, QMessageBox, QHeaderView, QAbstractItemView

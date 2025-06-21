@@ -1,9 +1,12 @@
+# カスタムデータを入力するページ
+
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QTreeWidget,
     QTreeWidgetItem, QLabel
 )
 from PySide6.QtCore import Qt, Signal
-
+class CustomEditPage(QWidget):
+    """ネストしたカスタムデータを入力するページ"""
 
 class CustomEditPage(QWidget):
     """Page to input nested custom data."""

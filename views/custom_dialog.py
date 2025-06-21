@@ -1,9 +1,12 @@
+# ネストしたカスタムデータ入力ダイアログ
+
 from PySide6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QPushButton, QTreeWidget,
     QTreeWidgetItem, QLabel
 )
 from PySide6.QtCore import Qt
-
+class CustomEditDialog(QDialog):
+    """ネストしたカスタムデータを入力するダイアログ"""
 
 class CustomEditDialog(QDialog):
     """Dialog to input nested custom data."""

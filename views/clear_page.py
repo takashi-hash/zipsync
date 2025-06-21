@@ -1,3 +1,5 @@
+# 全データ削除を実行するページ
+
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton
 
 

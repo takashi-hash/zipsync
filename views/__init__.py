@@ -1,3 +1,5 @@
+# GUI 各ページをまとめたパッケージ
+
 from .register_page import RegisterPage
 from .clear_page import ClearPage
 from .search_page import SearchPage

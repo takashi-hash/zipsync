@@ -1,3 +1,5 @@
+# ZIP ファイルをダウンロードするユーティリティ
+
 import os
 import requests
 
@@ -5,6 +7,7 @@ RESOURCE_DIR = "resources"
 
 
 def download_zip(url: str, save_as: str = None) -> str:
+    """URL から ZIP をダウンロードして保存"""
     if not os.path.exists(RESOURCE_DIR):
         os.makedirs(RESOURCE_DIR)
 

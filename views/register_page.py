@@ -1,7 +1,9 @@
+# URL を入力して処理を実行するページ
+
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton
 
 
-class RegisterPage(QWidget):
+    """住所データ処理を行う汎用ページ"""
     """Generic page for executing address data operations."""
 
     def __init__(self, label: str, button_label: str):
