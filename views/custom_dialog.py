@@ -15,6 +15,7 @@ class CustomEditDialog(QDialog):
         super().__init__(parent)
         self.setWindowTitle("カスタム項目追加")
         layout = QVBoxLayout(self)
+        layout.setContentsMargins(16, 16, 16, 16)
 
         self.tree = QTreeWidget()
         self.tree.setColumnCount(2)

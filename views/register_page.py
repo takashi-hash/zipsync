@@ -22,6 +22,7 @@ class RegisterPage(QWidget):
         self.url_input = QLineEdit()
 
         layout = QVBoxLayout(self)
+        layout.setContentsMargins(16, 16, 16, 16)
 
         title = QLabel(f"{label}用 URL")
         title.setObjectName("pageTitle")

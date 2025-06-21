@@ -126,6 +126,7 @@ class MainWindow(QMainWindow):
 
         # 全体レイアウト
         layout = QVBoxLayout()
+        layout.setContentsMargins(16, 16, 16, 16)
         layout.addWidget(container)
         layout.addWidget(log_header)
         layout.addWidget(self.output)
