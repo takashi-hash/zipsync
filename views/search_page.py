@@ -26,6 +26,7 @@ class SearchPage(QWidget):
         add_row_area.addWidget(self.add_row_btn)
         add_row_area.addStretch()
         layout.addLayout(add_row_area)
+        self._update_add_button()
 
         self.search_btn = QPushButton("検索")
         layout.addWidget(self.search_btn)
@@ -81,10 +82,13 @@ class SearchPage(QWidget):
         return row
 
     def _add_row(self):
+        if len(self.rows) >= 4:
+            return
         row = self._create_row()
         self.rows.append(row)
         self.form_container.addLayout(row["layout"])
         self._update_remove_buttons()
+        self._update_add_button()
 
     def _remove_row(self, row):
         if row not in self.rows:
@@ -97,11 +101,15 @@ class SearchPage(QWidget):
                 widget.setParent(None)
         self.form_container.removeItem(row["layout"])
         self._update_remove_buttons()
+        self._update_add_button()
 
     def _update_remove_buttons(self):
         enable = len(self.rows) > 1
         for r in self.rows:
             r["remove"].setEnabled(enable)
+
+    def _update_add_button(self):
+        self.add_row_btn.setEnabled(len(self.rows) < 4)
 
     def get_filters(self):
         filters = []
