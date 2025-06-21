@@ -9,11 +9,13 @@ class ClearPage(QWidget):
         super().__init__()
         layout = QVBoxLayout(self)
         layout.setContentsMargins(16, 16, 16, 16)
-        title = QLabel("登録データを全て削除")
+        title = QLabel("🧹 住所データの全削除")
         title.setObjectName("pageTitle")
         layout.addWidget(title)
 
-        info = QLabel("登録済みの住所データを全て削除します。")
+        info = QLabel(
+            "すべての住所データを削除します（履歴・カスタムデータも対象にするか要確認）。"
+        )
         info.setWordWrap(True)
         info.setStyleSheet("color: gray;")
         layout.addWidget(info)

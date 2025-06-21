@@ -12,9 +12,16 @@ class JsonDataPage(QWidget):
         layout = QVBoxLayout(self)
         layout.setContentsMargins(16, 16, 16, 16)
 
-        title = QLabel("jsonデータ")
+        title = QLabel("🔄 データの保存・復元")
         title.setObjectName("pageTitle")
         layout.addWidget(title)
+
+        info = QLabel(
+            "住所データや履歴のJSONバックアップとインポートを行います。"
+        )
+        info.setWordWrap(True)
+        info.setStyleSheet("color: gray;")
+        layout.addWidget(info)
 
         import_row = QHBoxLayout()
         import_label = QLabel("データをインポート")

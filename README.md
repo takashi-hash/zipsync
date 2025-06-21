@@ -1,7 +1,7 @@
 # 🇯🇵 日本郵便住所データ管理システム（TinyDB版）
 
 ## 📦 概要
-日本郵便が公開している住所CSVデータ（`utf_ken_all.zip`、`utf_add_YYMM.zip`、`utf_del_YYMM.zip`）を取り込み、ローカルの JSON データベース（TinyDB）で管理するためのデスクトップアプリです。GUI 上から一括登録や差分追加・削除、検索が行えます。
+日本郵便が公開している住所CSVデータ（`utf_ken_all.zip`、`utf_add_YYMM.zip`、`utf_del_YYMM.zip`）を取り込み、ローカルの JSON データベース（TinyDB）で管理するためのデスクトップアプリです。GUI 上から住所データの一括登録や更新データの追加登録・削除、検索が行えます。
 
 ## 🛠 セットアップ
 ### 1. 仮想環境の作成と有効化
@@ -22,8 +22,8 @@ pip install -r requirements.txt
 ### 3. 初期データの配置
 以下の ZIP ファイルを日本郵便公式サイトからダウンロードし、`resources/` フォルダーに配置してください。
 - 全国版: <https://www.post.japanpost.jp/zipcode/dl/kogaki/zip/utf_ken_all.zip>
-- 差分追加: <https://www.post.japanpost.jp/zipcode/dl/kogaki/zip/utf_add_YYMM.zip>
-- 差分削除: <https://www.post.japanpost.jp/zipcode/dl/kogaki/zip/utf_del_YYMM.zip>
+- 追加データ: <https://www.post.japanpost.jp/zipcode/dl/kogaki/zip/utf_add_YYMM.zip>
+- 削除データ: <https://www.post.japanpost.jp/zipcode/dl/kogaki/zip/utf_del_YYMM.zip>
 
 ### ダウンロードデータのフォーマット
 日本郵便が配布する CSV ファイルは次の順で項目が並んでいます。
@@ -54,9 +54,9 @@ python main.py
 ## 🖥️ 主な機能
 | 機能 | 説明 |
 | --- | --- |
-| 一括登録 | `utf_ken_all.zip` を読み込み全件登録 |
-| 差分追加 | `utf_add_YYMM.zip` の内容を追加登録 |
-| 差分削除 | `utf_del_YYMM.zip` の内容を論理削除 |
+| 📦 全住所データの初期登録 | `utf_ken_all.zip` を読み込み全件登録 |
+| ➕ 更新データの追加登録（新住所） | `utf_add_YYMM.zip` の内容を追加登録 |
+| ➖ 更新データによる削除（削除済住所） | `utf_del_YYMM.zip` の内容を論理削除 |
 | 全削除 | 登録済みの住所データをすべて削除 |
 | 検索 | 郵便番号・都道府県・市区町村・町域でリアルタイム検索 |
 | 詳細検索API | バックエンドで郵便番号・都道府県・市区町村・町域を条件指定して検索 |

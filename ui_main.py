@@ -42,7 +42,15 @@ class MainWindow(QMainWindow):
         # サイドメニュー
         self.menu_width = 180
         self.menu = QListWidget()
-        self.menu.addItems(["一括登録", "差分追加", "差分削除", "全削除", "検索", "履歴", "jsonデータ"])
+        self.menu.addItems([
+            "住所データ / 一括登録",
+            "データ更新 / 追加",
+            "データ更新 / 削除",
+            "全削除",
+            "検索",
+            "履歴",
+            "JSONのインポート / エクスポート",
+        ])
         self.menu.setFixedWidth(self.menu_width)
         self.menu.currentRowChanged.connect(self.switch_page)
 
@@ -61,16 +69,32 @@ class MainWindow(QMainWindow):
 
         # 各ページを作成
         bulk_info = (
-            "日本郵便サイトの『utf_ken_all.zip』URLを入力し実行してください。\n"
-            "既存データは削除され、新しいデータで置き換わります。"
+            "日本郵便が公開している全住所データ（utf_ken_all.zip）を使って、"
+            "新規または再登録します。"
         )
-        self.bulk_page = RegisterPage("一括登録", "一括登録 実行", instructions=bulk_info)
+        self.bulk_page = RegisterPage(
+            "📦 全住所データの初期登録",
+            "一括登録 実行",
+            instructions=bulk_info,
+        )
 
-        add_info = "日本郵便サイトの『utf_add_YYMM.zip』URLを入力し実行してください。"
-        self.add_page = RegisterPage("差分追加", "差分追加 実行", instructions=add_info)
+        add_info = (
+            "日本郵便が月次で公開する追加データ（utf_add_YYMM.zip）を既存データに加えます。"
+        )
+        self.add_page = RegisterPage(
+            "➕ 更新データの追加登録（新住所）",
+            "差分追加 実行",
+            instructions=add_info,
+        )
 
-        del_info = "日本郵便サイトの『utf_del_YYMM.zip』URLを入力し実行してください。"
-        self.del_page = RegisterPage("差分削除", "差分削除 実行", instructions=del_info)
+        del_info = (
+            "日本郵便の削除データ（utf_del_YYMM.zip）に基づいて、該当の住所を論理削除します。"
+        )
+        self.del_page = RegisterPage(
+            "➖ 更新データによる削除（削除済住所）",
+            "差分削除 実行",
+            instructions=del_info,
+        )
         self.clear_page = ClearPage()
         self.search_page = SearchPage()
         self.logs_page = LogsPage()
