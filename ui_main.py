@@ -40,16 +40,16 @@ class MainWindow(QMainWindow):
         self.controller = Controller()
 
         # サイドメニュー
-        self.menu_width = 180
+        self.menu_width = 200
         self.menu = QListWidget()
         self.menu.addItems([
             "住所データ / 一括登録",
             "データ更新 / 追加",
             "データ更新 / 削除",
-            "全削除",
-            "検索",
-            "履歴",
-            "JSONのインポート / エクスポート",
+            "住所データ / 一括削除",
+            "詳細検索",
+            "更新履歴",
+            "インポート / エクスポート",
         ])
         self.menu.setFixedWidth(self.menu_width)
         self.menu.currentRowChanged.connect(self.switch_page)
