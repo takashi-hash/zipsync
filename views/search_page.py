@@ -12,7 +12,9 @@ class SearchPage(QWidget):
     def __init__(self):
         super().__init__()
         layout = QVBoxLayout(self)
-        layout.addWidget(QLabel("詳細検索"))
+        title = QLabel("詳細検索")
+        title.setObjectName("pageTitle")
+        layout.addWidget(title)
 
         self.form_container = QVBoxLayout()
         layout.addLayout(self.form_container)
@@ -21,6 +23,7 @@ class SearchPage(QWidget):
 
         add_row_area = QHBoxLayout()
         self.add_row_btn = QPushButton("＋ 条件追加")
+        self.add_row_btn.setObjectName("secondaryButton")
         self.add_row_btn.clicked.connect(self._add_row)
         add_row_area.addWidget(self.add_row_btn)
         add_row_area.addStretch()
@@ -30,6 +33,7 @@ class SearchPage(QWidget):
         self._update_add_button()
 
         self.search_btn = QPushButton("検索")
+        self.search_btn.setObjectName("primaryButton")
         layout.addWidget(self.search_btn)
 
         self.table = QTableView()
@@ -38,6 +42,7 @@ class SearchPage(QWidget):
         layout.addWidget(self.table, 1)
 
         self.add_custom_btn = QPushButton("項目を追加")
+        self.add_custom_btn.setObjectName("primaryButton")
         self.add_custom_btn.setEnabled(False)
         layout.addWidget(self.add_custom_btn)
 
@@ -51,7 +56,9 @@ class SearchPage(QWidget):
 
         pager = QHBoxLayout()
         self.prev_btn = QPushButton("前へ")
+        self.prev_btn.setObjectName("secondaryButton")
         self.next_btn = QPushButton("次へ")
+        self.next_btn.setObjectName("secondaryButton")
         self.page_label = QLabel("1 / 1")
         for w in [self.prev_btn, self.page_label, self.next_btn]:
             pager.addWidget(w)
@@ -77,6 +84,7 @@ class SearchPage(QWidget):
         row["town"] = QLineEdit()
         row["town"].setPlaceholderText("町域")
         row["remove"] = QPushButton("－")
+        row["remove"].setObjectName("dangerButton")
         row["remove"].clicked.connect(lambda: self._remove_row(row))
         for w in [row["zip"], row["pref"], row["city"], row["town"], row["remove"]]:
             layout.addWidget(w)

@@ -12,7 +12,9 @@ class LogsPage(QWidget):
     def __init__(self):
         super().__init__()
         layout = QVBoxLayout(self)
-        layout.addWidget(QLabel("差分取込履歴"))
+        title = QLabel("差分取込履歴")
+        title.setObjectName("pageTitle")
+        layout.addWidget(title)
         layout.addWidget(QLabel(
             "一覧から履歴を選択し、下のボタンで復元・再実行・削除できます。"
         ))
@@ -47,8 +49,11 @@ class LogsPage(QWidget):
 
         actions = QHBoxLayout()
         self.restore_btn = QPushButton("復元")
+        self.restore_btn.setObjectName("primaryButton")
         self.reapply_btn = QPushButton("再実行")
+        self.reapply_btn.setObjectName("secondaryButton")
         self.delete_log_btn = QPushButton("履歴削除")
+        self.delete_log_btn.setObjectName("dangerButton")
         for w in [self.restore_btn, self.reapply_btn, self.delete_log_btn]:
             actions.addWidget(w)
         actions.addStretch()
@@ -56,8 +61,10 @@ class LogsPage(QWidget):
 
         pager = QHBoxLayout()
         self.prev_btn = QPushButton("前へ")
+        self.prev_btn.setObjectName("secondaryButton")
         self.page_label = QLabel("1 / 1")
         self.next_btn = QPushButton("次へ")
+        self.next_btn.setObjectName("secondaryButton")
         for w in [self.prev_btn, self.page_label, self.next_btn]:
             pager.addWidget(w)
         pager.addStretch()
