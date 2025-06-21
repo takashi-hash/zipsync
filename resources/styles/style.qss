@@ -3,66 +3,84 @@ QWidget {
     color: #333333;
     font-family: sans-serif;
     font-size: 14pt;
-    padding: 8px;
 }
 
+/* タイトルラベル */
 QLabel#pageTitle {
-    font-size: 28pt;
-    font-weight: bold;
-    color: #333333;
+    font-size: 30pt;
+    font-weight: 700;
+    color: #1A1A1A;
+    padding: 12px 0;
 }
 
+/* 共通ボタンベース */
 QPushButton {
-    min-height: 32px;
-    padding: 6px 12px;
-    border-radius: 4px;
+    min-height: 36px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: none;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
 }
 
+/* プライマリボタン */
 QPushButton#primaryButton {
-    background-color: #ABC4FF;
-    color: #333333;
+    background-color: #4F80FF;
+    color: #FFFFFF;
 }
 QPushButton#primaryButton:hover {
-    background-color: #C1D3FE;
+    background-color: #5C8EFF;
 }
 QPushButton#primaryButton:pressed {
-    background-color: #90CAF9;
+    background-color: #3A6AE0;
 }
 
+/* セカンダリボタン */
 QPushButton#secondaryButton {
-    background-color: #FFE5EC;
+    background-color: #F0F0F5;
     color: #333333;
 }
 QPushButton#secondaryButton:hover {
-    background-color: #FFC2D1;
+    background-color: #E0E0EB;
 }
 QPushButton#secondaryButton:pressed {
-    background-color: #FF8FAB;
+    background-color: #D0D0E0;
 }
 
+/* 危険操作ボタン */
 QPushButton#dangerButton {
-    background-color: #FF8FAB;
+    background-color: #FF5C75;
     color: white;
 }
 QPushButton#dangerButton:hover {
-    background-color: #FF6B9A;
+    background-color: #FF3B5E;
 }
 QPushButton#dangerButton:pressed {
-    background-color: #E05379;
+    background-color: #D62A4D;
 }
 
+/* テーブルビュー */
 QTableView {
     background-color: #FFFFFF;
-    border: 1px solid #ABC4FF;
-    gridline-color: #C1D3FE;
+    border: 1px solid #D0D7E2;
+    gridline-color: #E0E6ED;
+    alternate-background-color: #FAFBFC;
+    selection-background-color: #D6E4FF;
+    selection-color: #1A1A1A;
 }
 
-QTableView::item:selected {
-    background-color: #C1D3FE;
-}
-
+/* テーブルヘッダー */
 QHeaderView::section {
-    background-color: #ABC4FF;
-    padding: 4px;
-    border: 1px solid #FFFFFF;
+    background-color: #F0F4FF;
+    color: #333;
+    font-weight: 600;
+    padding: 6px;
+    border: 1px solid #D0D7E2;
+}
+
+QToolButton#menuToggleButton {
+    border: 1px solid #D0D7E2;
+    border-radius: 4px;
+    background-color: transparent;
+    padding: 2px;
 }
