@@ -21,7 +21,6 @@ QPushButton {
     border-radius: 6px;
     border: none;
     font-weight: 500;
-    transition: all 0.2s ease-in-out;
 }
 
 /* プライマリボタン */
@@ -37,15 +36,19 @@ QPushButton#primaryButton:pressed {
 }
 
 /* セカンダリボタン */
-QPushButton#secondaryButton {
-    background-color: #F0F0F5;
-    color: #333333;
+QPushButton#secondaryButton,
+QToolButton#secondaryButton {
+    background-color: #EDF2FB;
+    border: 1px solid #4F80FF;
+    color: #4F80FF;
 }
-QPushButton#secondaryButton:hover {
-    background-color: #E0E0EB;
+QPushButton#secondaryButton:hover,
+QToolButton#secondaryButton:hover {
+    background-color: #E0E7FF;
 }
-QPushButton#secondaryButton:pressed {
-    background-color: #D0D0E0;
+QPushButton#secondaryButton:pressed,
+QToolButton#secondaryButton:pressed {
+    background-color: #D5DFFF;
 }
 
 /* 危険操作ボタン */
@@ -86,13 +89,6 @@ QHeaderView::section {
     border: 1px solid #D0D7E2;
 }
 
-QToolButton#menuToggleButton {
-    border: 1px solid #D0D7E2;
-    border-radius: 4px;
-    background-color: transparent;
-    padding: 2px;
-}
-
 QListWidget::item {
     padding-top: 8px;
     padding-bottom: 8px;
@@ -101,4 +97,9 @@ QListWidget::item {
 QTableView::item:selected {
     background-color: #D6E4FF;
     color: #1A1A1A;
+}
+
+QTextEdit#logOutput {
+    background-color: #FFFFFF;
+    border: 1px solid #D0D7E2;
 }
