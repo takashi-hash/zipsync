@@ -1,3 +1,5 @@
+# 住所データの検索機能
+
 from typing import List, Dict, Tuple
 from functools import reduce
 from tinydb import Query
@@ -8,7 +10,7 @@ Address = Query()
 
 
 def search_partial(partial: str) -> List[Dict]:
-    """Return records whose fields contain the given keyword."""
+    """部分一致検索を行う"""
     if not partial:
         return []
     return db.search(
@@ -28,7 +30,7 @@ def search_with_filters(
     page: int = 1,
     per_page: int = 30,
 ) -> Tuple[List[Dict], int]:
-    """Search addresses with optional filters and pagination."""
+    """各種フィルタで検索しページ分割する"""
     conditions = []
     if zipcode:
         conditions.append(Address.zipcode.search(zipcode))
@@ -52,7 +54,7 @@ def search_with_filters(
 
 
 def search_multiple(filters: List[Dict], page: int = 1, per_page: int = 30) -> Tuple[List[Dict], int]:
-    """Search using multiple sets of filters and return combined results."""
+    """複数条件の結果を結合して返す"""
     combined = []
     for f in filters:
         z = f.get("zipcode", "")

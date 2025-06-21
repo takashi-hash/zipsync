@@ -1,10 +1,12 @@
+# 履歴を取り消す処理
+
 from .db_manager import insert_all, remove_by_zipcode
 from .log_manager import load_logs
 from typing import Literal
 
 
 def reverse_log_entry(index: int) -> str:
-    """Reverse the effect of a log entry by index and return result message."""
+    """指定履歴の効果を取り消して結果を返す"""
     logs = load_logs()
     if index < 0 or index >= len(logs):
         return f"[ERROR] 指定インデックスが無効: {index}"

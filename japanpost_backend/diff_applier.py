@@ -1,3 +1,5 @@
+# 差分ファイルを適用する処理
+
 import os
 from typing import Literal
 from .db_manager import remove_by_zipcode
@@ -8,7 +10,7 @@ from .models import create_log_entry
 
 
 def _already_applied(zip_path: str, file_type: Literal["add", "del"]) -> bool:
-    """Check if the given diff file was already applied."""
+    """差分ファイルが既に適用済みか確認"""
     basename = os.path.basename(zip_path)
     for log in load_logs():
         if log.get("source_file") == basename and log.get("type") == file_type:

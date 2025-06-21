@@ -1,7 +1,10 @@
+# 住所データおよびログエントリを生成するモデル
+
 from typing import Dict, List
 
 
 def create_address_entry(row: List[str]) -> Dict:
+    """CSV の1行から住所レコードを生成"""
     return {
         "zipcode": row[2],
         "pref": row[6],
@@ -17,6 +20,7 @@ def create_address_entry(row: List[str]) -> Dict:
 
 
 def create_log_entry(source_file: str, file_type: str, records: List[Dict], url: str) -> Dict:
+    """ログエントリを生成"""
     return {
         "source_file": source_file,
         "type": file_type,  # "add" or "del"

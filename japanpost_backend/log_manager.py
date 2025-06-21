@@ -1,3 +1,4 @@
+# 取込履歴ファイルの管理
 import json
 import os
 
@@ -23,7 +24,7 @@ def append_log(entry):
 
 
 def delete_log(index: int) -> bool:
-    """Physically remove a log entry by index."""
+    """指定の履歴を物理削除"""
     logs = load_logs()
     if index < 0 or index >= len(logs):
         return False
@@ -33,7 +34,7 @@ def delete_log(index: int) -> bool:
 
 
 def get_logs(page: int = 1, per_page: int = 30):
-    """Return paginated logs and total count."""
+    """ページ分割した履歴と総数を返す"""
     logs = load_logs()
     total = len(logs)
     start = max(page - 1, 0) * per_page

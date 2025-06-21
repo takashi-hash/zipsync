@@ -1,3 +1,5 @@
+# アプリケーションメインウィンドウの実装
+
 import sys
 from PySide6.QtWidgets import (
     QMainWindow, QWidget, QListWidget, QStackedWidget, QTextEdit, QLabel,
@@ -17,7 +19,7 @@ from views.custom_page import CustomEditPage
 
 
 class EmittingStream(QObject):
-    """Redirect writes to a Qt signal."""
+    """print 出力を Qt シグナルへ転送する"""
     text_written = Signal(str)
 
     def write(self, text):
@@ -28,6 +30,7 @@ class EmittingStream(QObject):
 
 
 class MainWindow(QMainWindow):
+    """メインウィンドウクラス"""
     def __init__(self):
         super().__init__()
         self.setWindowTitle("日本郵便住所データ管理")

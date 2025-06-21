@@ -1,3 +1,5 @@
+# 詳細検索を行うページ
+
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit,
     QPushButton, QTableView, QAbstractItemView
