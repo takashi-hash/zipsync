@@ -2,7 +2,7 @@
 
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QLabel, QHBoxLayout, QLineEdit,
-    QPushButton, QTableView, QAbstractItemView
+    QPushButton, QTableView, QAbstractItemView, QSizePolicy
 )
 from PySide6.QtCore import Qt, QRegularExpression
 from PySide6.QtGui import QStandardItemModel, QStandardItem, QRegularExpressionValidator
@@ -34,7 +34,9 @@ class SearchPage(QWidget):
 
         self.search_btn = QPushButton("検索")
         self.search_btn.setObjectName("primaryButton")
-        layout.addWidget(self.search_btn)
+        self.search_btn.setFixedHeight(40)
+        self.search_btn.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        layout.addWidget(self.search_btn, alignment=Qt.AlignCenter)
 
         self.table = QTableView()
         self.table.setSelectionBehavior(QAbstractItemView.SelectRows)
@@ -44,7 +46,9 @@ class SearchPage(QWidget):
         self.add_custom_btn = QPushButton("項目を追加")
         self.add_custom_btn.setObjectName("primaryButton")
         self.add_custom_btn.setEnabled(False)
-        layout.addWidget(self.add_custom_btn)
+        self.add_custom_btn.setFixedHeight(40)
+        self.add_custom_btn.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        layout.addWidget(self.add_custom_btn, alignment=Qt.AlignCenter)
 
         self.no_results_label = QLabel("")
         layout.addWidget(self.no_results_label)

@@ -1,6 +1,7 @@
 # 全データ削除を実行するページ
 
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QSizePolicy
+from PySide6.QtCore import Qt
 
 
 class ClearPage(QWidget):
@@ -12,5 +13,7 @@ class ClearPage(QWidget):
         layout.addWidget(title)
         self.run_button = QPushButton("全削除 実行")
         self.run_button.setObjectName("dangerButton")
-        layout.addWidget(self.run_button)
+        self.run_button.setFixedHeight(40)
+        self.run_button.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        layout.addWidget(self.run_button, alignment=Qt.AlignCenter)
         layout.addStretch()
