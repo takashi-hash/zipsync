@@ -115,3 +115,44 @@ class Controller:
             update_custom(zc, custom)
         return f"[OK] カスタム項目を更新しました ({len(mapping)} 件)"
 
+    # --- json import/export ---
+    @staticmethod
+    def _validate_record(rec):
+        required = {"zipcode", "pref", "city", "town", "kana", "custom"}
+        if not isinstance(rec, dict) or not required.issubset(rec.keys()):
+            return False
+        kana = rec.get("kana")
+        if not isinstance(kana, dict):
+            return False
+        if not {"pref", "city", "town"}.issubset(kana.keys()):
+            return False
+        return True
+
+    def import_json(self, src_path: str):
+        import json
+        from japanpost_backend.db_manager import DB_PATH
+        try:
+            with open(src_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            if not isinstance(data, dict) or "_default" not in data:
+                raise ValueError("invalid format")
+            if not isinstance(data["_default"], dict):
+                raise ValueError("invalid format")
+            for rec in data["_default"].values():
+                if not self._validate_record(rec):
+                    raise ValueError("invalid record structure")
+            with open(DB_PATH, "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
+            return "[OK] JSONをインポートしました"
+        except Exception as e:
+            return f"[ERROR] インポート失敗: {e}"
+
+    def export_json(self, dest_path: str):
+        import shutil
+        from japanpost_backend.db_manager import DB_PATH
+        try:
+            shutil.copyfile(DB_PATH, dest_path)
+            return f"[OK] JSONをエクスポートしました: {dest_path}"
+        except Exception as e:
+            return f"[ERROR] エクスポート失敗: {e}"
+

@@ -3,7 +3,7 @@
 import sys
 from PySide6.QtWidgets import (
     QMainWindow, QWidget, QListWidget, QStackedWidget, QTextEdit, QLabel,
-    QHBoxLayout, QVBoxLayout, QMessageBox, QToolButton
+    QHBoxLayout, QVBoxLayout, QMessageBox, QToolButton, QFileDialog
 )
 from PySide6.QtCore import Qt, QObject, Signal
 from PySide6.QtGui import QStandardItem, QStandardItemModel
@@ -16,6 +16,7 @@ from views.clear_page import ClearPage
 from views.search_page import SearchPage
 from views.logs_page import LogsPage
 from views.custom_page import CustomEditPage
+from views.json_page import JsonDataPage
 
 
 class EmittingStream(QObject):
@@ -41,7 +42,7 @@ class MainWindow(QMainWindow):
         # サイドメニュー
         self.menu_width = 180
         self.menu = QListWidget()
-        self.menu.addItems(["一括登録", "差分追加", "差分削除", "全削除", "検索", "履歴"])
+        self.menu.addItems(["一括登録", "差分追加", "差分削除", "全削除", "検索", "履歴", "jsonデータ"])
         self.menu.setFixedWidth(self.menu_width)
         self.menu.currentRowChanged.connect(self.switch_page)
 
@@ -69,6 +70,7 @@ class MainWindow(QMainWindow):
         self.search_page = SearchPage()
         self.logs_page = LogsPage()
         self.custom_page = CustomEditPage()
+        self.json_page = JsonDataPage()
         self._pending_zipcodes = []
 
         # ボタンに処理を接続
@@ -92,12 +94,14 @@ class MainWindow(QMainWindow):
             lambda: self.load_logs_page(self.log_current_page + 1))
         self.custom_page.accepted.connect(self._custom_page_accepted)
         self.custom_page.cancelled.connect(self._custom_page_cancelled)
+        self.json_page.import_btn.clicked.connect(self.import_json_data)
+        self.json_page.export_btn.clicked.connect(self.export_json_data)
 
         # ページ切替部
         self.stack = QStackedWidget()
         for page in [self.bulk_page, self.add_page, self.del_page,
                      self.clear_page, self.search_page, self.logs_page,
-                     self.custom_page]:
+                     self.json_page, self.custom_page]:
             self.stack.addWidget(page)
 
         # メイン領域
@@ -366,3 +370,20 @@ class MainWindow(QMainWindow):
             msg = self.controller.reapply_logs(indices)
             self.output.append(msg)
             self.load_logs_page(self.log_current_page)
+
+    # --- json import/export ---
+    def import_json_data(self):
+        path, _ = QFileDialog.getOpenFileName(
+            self, "JSONをインポート", "", "JSON Files (*.json)")
+        if not path:
+            return
+        msg = self.controller.import_json(path)
+        self.output.append(msg)
+
+    def export_json_data(self):
+        path, _ = QFileDialog.getSaveFileName(
+            self, "JSONをエクスポート", "address.json", "JSON Files (*.json)")
+        if not path:
+            return
+        msg = self.controller.export_json(path)
+        self.output.append(msg)
