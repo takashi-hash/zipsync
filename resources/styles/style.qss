@@ -99,6 +99,12 @@ QTableView::item:selected {
     color: #1A1A1A;
 }
 
+/* ツリービュー選択時の色 */
+QTreeWidget::item:selected {
+    background-color: #D6E4FF;
+    color: #1A1A1A;
+}
+
 QTextEdit#logOutput {
     background-color: #FFFFFF;
     border: 1px solid #D0D7E2;

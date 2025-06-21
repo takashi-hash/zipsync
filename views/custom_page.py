@@ -23,6 +23,7 @@ class CustomEditPage(QWidget):
         layout.addWidget(self.header_label)
 
         nav = QHBoxLayout()
+        nav.setAlignment(Qt.AlignCenter)  # ① 中央に配置
         self.prev_btn = QPushButton("前へ")
         self.prev_btn.setObjectName("secondaryButton")
         self.next_btn = QPushButton("次へ")
@@ -41,7 +42,6 @@ class CustomEditPage(QWidget):
         nav.addWidget(self.prev_btn)
         nav.addWidget(info_widget)
         nav.addWidget(self.next_btn)
-        nav.addStretch()
         layout.addLayout(nav)
 
         self.tree = QTreeWidget()
@@ -49,22 +49,37 @@ class CustomEditPage(QWidget):
         self.tree.setHeaderLabels(["キー", "値"])
         layout.addWidget(self.tree)
 
-        btns = QHBoxLayout()
-        btns.setAlignment(Qt.AlignCenter)
+        # 操作用ボタン
+        top_btns = QHBoxLayout()
+        top_btns.setAlignment(Qt.AlignCenter)
         self.add_btn = QPushButton("＋")
         self.add_btn.setObjectName("secondaryButton")
         self.remove_btn = QPushButton("－")
         self.remove_btn.setObjectName("dangerButton")
         self.add_child_btn = QPushButton("子要素を追加")
         self.add_child_btn.setObjectName("secondaryButton")
+        for b in [self.add_btn, self.remove_btn, self.add_child_btn]:
+            top_btns.addWidget(b)
+
+        action_btns = QHBoxLayout()
+        action_btns.setAlignment(Qt.AlignCenter)
         self.cancel_btn = QPushButton("キャンセル")
         self.cancel_btn.setObjectName("secondaryButton")
         self.ok_btn = QPushButton("決定")
         self.ok_btn.setObjectName("primaryButton")
-        for b in [self.add_btn, self.remove_btn, self.add_child_btn,
-                  self.cancel_btn, self.ok_btn]:
-            btns.addWidget(b)
-        layout.addLayout(btns)
+        # ボタンサイズをそろえる
+        max_w = max(self.cancel_btn.sizeHint().width(),
+                    self.ok_btn.sizeHint().width())
+        max_h = max(self.cancel_btn.sizeHint().height(),
+                    self.ok_btn.sizeHint().height())
+        self.cancel_btn.setFixedSize(max_w, max_h)
+        self.ok_btn.setFixedSize(max_w, max_h)
+        for b in [self.cancel_btn, self.ok_btn]:
+            action_btns.addWidget(b)
+
+        layout.addLayout(top_btns)
+        layout.addSpacing(12)  # ② 1行開ける
+        layout.addLayout(action_btns)
 
         self.add_btn.clicked.connect(self.add_root_item)
         self.add_child_btn.clicked.connect(self.add_child_item)
@@ -81,6 +96,7 @@ class CustomEditPage(QWidget):
 
     # --- navigation helpers ---
     def _navigate(self, step: int):
+        """Move to the previous/next record and refresh view."""
         if not self._order:
             return
         self._save_current()
@@ -89,6 +105,7 @@ class CustomEditPage(QWidget):
         self._update_nav()
 
     def _load_current(self):
+        """Load current record info and populate the tree."""
         self.tree.clear()
         if not self._order:
             for lbl in [self.index_label, self.zip_label, self.pref_label,
@@ -107,16 +124,19 @@ class CustomEditPage(QWidget):
         self._populate_tree(data)
 
     def _save_current(self):
+        """Save the current tree state back to the record map."""
         if not self._order:
             return
         zc = self._order[self._index]
         self._records[zc] = self.get_data()
 
     def _update_nav(self):
+        """Enable/disable navigation buttons."""
         self.prev_btn.setEnabled(self._index > 0)
         self.next_btn.setEnabled(self._index < len(self._order) - 1)
 
     def _populate_tree(self, data):
+        """Populate tree widget from nested mapping."""
         def add_items(parent, d):
             if isinstance(d, dict):
                 for k, v in d.items():
@@ -163,11 +183,13 @@ class CustomEditPage(QWidget):
 
     # --- button handlers ---
     def add_root_item(self):
+        """Add a new top level key/value pair."""
         item = QTreeWidgetItem(["key", "value"])
         item.setFlags(item.flags() | Qt.ItemIsEditable)
         self.tree.addTopLevelItem(item)
 
     def add_child_item(self):
+        """Add a child node to the currently selected item."""
         current = self.tree.currentItem()
         if not current:
             return
@@ -177,6 +199,7 @@ class CustomEditPage(QWidget):
         current.setExpanded(True)
 
     def remove_item(self):
+        """Remove the selected item from the tree."""
         current = self.tree.currentItem()
         if not current:
             return
@@ -189,11 +212,13 @@ class CustomEditPage(QWidget):
                 self.tree.takeTopLevelItem(idx)
 
     def _emit_accept(self):
+        """Emit the accepted signal with current records."""
         self._save_current()
         self.accepted.emit(self._records)
 
     # --- data retrieval ---
     def get_data(self):
+        """Return the current tree contents as a nested dict."""
         result = {}
         for i in range(self.tree.topLevelItemCount()):
             key, val = self._build_dict(self.tree.topLevelItem(i))
@@ -206,6 +231,7 @@ class CustomEditPage(QWidget):
         return result
 
     def _build_dict(self, item):
+        """Recursively build dictionary from QTreeWidgetItem."""
         if item.childCount() > 0:
             d = {}
             for i in range(item.childCount()):
