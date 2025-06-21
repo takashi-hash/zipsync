@@ -23,8 +23,11 @@ class CustomEditDialog(QDialog):
 
         btns = QHBoxLayout()
         self.add_btn = QPushButton("＋")
+        self.add_btn.setObjectName("secondaryButton")
         self.add_child_btn = QPushButton("＋子")
+        self.add_child_btn.setObjectName("secondaryButton")
         self.remove_btn = QPushButton("－")
+        self.remove_btn.setObjectName("dangerButton")
         btns.addWidget(self.add_btn)
         btns.addWidget(self.add_child_btn)
         btns.addWidget(self.remove_btn)
@@ -33,7 +36,9 @@ class CustomEditDialog(QDialog):
 
         action = QHBoxLayout()
         self.ok_btn = QPushButton("決定")
+        self.ok_btn.setObjectName("primaryButton")
         self.cancel_btn = QPushButton("キャンセル")
+        self.cancel_btn.setObjectName("secondaryButton")
         action.addWidget(self.ok_btn)
         action.addWidget(self.cancel_btn)
         action.addStretch()
