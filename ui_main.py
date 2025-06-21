@@ -43,11 +43,11 @@ class MainWindow(QMainWindow):
         self.menu_width = 200
         self.menu = QListWidget()
         self.menu.addItems([
+            "詳細検索",
             "住所データ / 一括登録",
+            "住所データ / 一括削除",
             "データ更新 / 追加",
             "データ更新 / 削除",
-            "住所データ / 一括削除",
-            "詳細検索",
             "更新履歴",
             "インポート / エクスポート",
         ])
@@ -129,9 +129,16 @@ class MainWindow(QMainWindow):
 
         # ページ切替部
         self.stack = QStackedWidget()
-        for page in [self.bulk_page, self.add_page, self.del_page,
-                     self.clear_page, self.search_page, self.logs_page,
-                     self.json_page, self.custom_page]:
+        for page in [
+            self.search_page,
+            self.bulk_page,
+            self.clear_page,
+            self.add_page,
+            self.del_page,
+            self.logs_page,
+            self.json_page,
+            self.custom_page,
+        ]:
             self.stack.addWidget(page)
 
         # メイン領域
@@ -205,7 +212,7 @@ class MainWindow(QMainWindow):
 
     def switch_page(self, index):
         self.stack.setCurrentIndex(index)
-        if index == 4:  # 検索ページ
+        if index == 0:  # 検索ページ
             self.perform_search(1)
         elif index == 5:  # 履歴ページ
             self.load_logs_page(1)
