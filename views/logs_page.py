@@ -24,6 +24,18 @@ class LogsPage(QWidget):
         self.model.setHorizontalHeaderLabels([
             "種別", "ファイル", "件数", "日時"
         ])
+
+        pager = QHBoxLayout()
+        self.prev_btn = QPushButton("前へ")
+        self.prev_btn.setObjectName("secondaryButton")
+        self.page_label = QLabel("1 / 1")
+        self.next_btn = QPushButton("次へ")
+        self.next_btn.setObjectName("secondaryButton")
+        for w in [self.prev_btn, self.page_label, self.next_btn]:
+            pager.addWidget(w)
+        pager.addStretch()
+        layout.addLayout(pager)
+
         self.table = QTableView()
         self.table.setModel(self.model)
         self.table.setSelectionBehavior(QAbstractItemView.SelectRows)
@@ -36,6 +48,25 @@ class LogsPage(QWidget):
         self.table.clicked.connect(self._display_details)
         layout.addWidget(self.table, 1)
 
+        actions = QHBoxLayout()
+        self.restore_btn = QPushButton("復元")
+        self.restore_btn.setObjectName("primaryButton")
+        self.reapply_btn = QPushButton("再実行")
+        self.reapply_btn.setObjectName("primaryButton")
+        self.delete_log_btn = QPushButton("履歴削除")
+        self.delete_log_btn.setObjectName("dangerButton")
+        button_width = max(
+            self.restore_btn.sizeHint().width(),
+            self.reapply_btn.sizeHint().width(),
+            self.delete_log_btn.sizeHint().width(),
+        )
+        for w in [self.restore_btn, self.reapply_btn, self.delete_log_btn]:
+            w.setFixedWidth(button_width)
+            actions.addWidget(w)
+        actions.insertStretch(0)
+        actions.addStretch()
+        layout.addLayout(actions)
+
         self.details_model = QStandardItemModel(0, 4)
         self.details_model.setHorizontalHeaderLabels([
             "郵便番号", "都道府県", "市区町村", "町域"
@@ -47,29 +78,6 @@ class LogsPage(QWidget):
         layout.addWidget(self.details_table, 1)
 
         self.logs = []
-
-        actions = QHBoxLayout()
-        self.restore_btn = QPushButton("復元")
-        self.restore_btn.setObjectName("primaryButton")
-        self.reapply_btn = QPushButton("再実行")
-        self.reapply_btn.setObjectName("secondaryButton")
-        self.delete_log_btn = QPushButton("履歴削除")
-        self.delete_log_btn.setObjectName("dangerButton")
-        for w in [self.restore_btn, self.reapply_btn, self.delete_log_btn]:
-            actions.addWidget(w)
-        actions.addStretch()
-        layout.addLayout(actions)
-
-        pager = QHBoxLayout()
-        self.prev_btn = QPushButton("前へ")
-        self.prev_btn.setObjectName("secondaryButton")
-        self.page_label = QLabel("1 / 1")
-        self.next_btn = QPushButton("次へ")
-        self.next_btn.setObjectName("secondaryButton")
-        for w in [self.prev_btn, self.page_label, self.next_btn]:
-            pager.addWidget(w)
-        pager.addStretch()
-        layout.addLayout(pager)
 
         self.current_page = 1
         self.total_pages = 1
