@@ -3,6 +3,7 @@
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton
 
 
+class RegisterPage(QWidget):
     """住所データ処理を行う汎用ページ"""
     """Generic page for executing address data operations."""
 

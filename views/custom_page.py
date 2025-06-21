@@ -5,10 +5,10 @@ from PySide6.QtWidgets import (
     QTreeWidgetItem, QLabel
 )
 from PySide6.QtCore import Qt, Signal
-class CustomEditPage(QWidget):
-    """ネストしたカスタムデータを入力するページ"""
+
 
 class CustomEditPage(QWidget):
+    """ネストしたカスタムデータを入力するページ"""
     """Page to input nested custom data."""
 
     accepted = Signal(dict)
