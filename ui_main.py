@@ -47,13 +47,14 @@ class MainWindow(QMainWindow):
 
         # サイドバー開閉ボタン
         self.toggle_menu_btn = QToolButton()
+        self.toggle_menu_btn.setObjectName("menuToggleButton")
         self.toggle_menu_btn.setArrowType(Qt.LeftArrow)
-        self.toggle_menu_btn.setAutoRaise(True)
+        self.toggle_menu_btn.setAutoRaise(False)
         self.toggle_menu_btn.clicked.connect(self.toggle_menu)
 
         self.menu_container = QWidget()
         menu_layout = QVBoxLayout(self.menu_container)
-        menu_layout.setContentsMargins(0, 0, 0, 0)
+        menu_layout.setContentsMargins(0, 10, 0, 10)
         menu_layout.addWidget(self.toggle_menu_btn, alignment=Qt.AlignRight)
         menu_layout.addWidget(self.menu)
 
