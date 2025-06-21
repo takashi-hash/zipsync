@@ -58,7 +58,11 @@ class MainWindow(QMainWindow):
         menu_layout.addWidget(self.menu)
 
         # 各ページを作成
-        self.bulk_page = RegisterPage("一括登録", "一括登録 実行")
+        bulk_info = (
+            "日本郵便サイトの『utf_ken_all.zip』URLを入力し実行してください。\n"
+            "既存データは削除され、新しいデータで置き換わります。"
+        )
+        self.bulk_page = RegisterPage("一括登録", "一括登録 実行", instructions=bulk_info)
         self.add_page = RegisterPage("差分追加", "差分追加 実行")
         self.del_page = RegisterPage("差分削除", "差分削除 実行")
         self.clear_page = ClearPage()
