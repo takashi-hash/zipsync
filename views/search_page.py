@@ -27,12 +27,15 @@ class SearchPage(QWidget):
         self.add_row_btn = QPushButton("＋ 条件追加")
         self.add_row_btn.setObjectName("secondaryButton")
         self.add_row_btn.clicked.connect(self._add_row)
+        self.add_row_btn.setFixedHeight(40)
+        self.add_row_btn.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+
         self.search_btn = QPushButton("検索")
         self.search_btn.setObjectName("primaryButton")
         self.search_btn.setFixedHeight(40)
         self.search_btn.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         # 横幅を揃える
-        button_width = 120
+        button_width = 140
         self.add_row_btn.setFixedWidth(button_width)
         self.search_btn.setFixedWidth(button_width)
         controls.addStretch()
