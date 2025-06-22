@@ -41,6 +41,7 @@ class RegisterPage(QWidget):
         input_font.setPointSize(self.url_input.font().pointSize() + 2)
         self.url_input.setFont(input_font)
         self.url_input.setFixedHeight(36)
+        self.url_input.setMinimumWidth(200)
         layout.addWidget(self.url_input)
 
         self.run_button = QPushButton(button_label)
