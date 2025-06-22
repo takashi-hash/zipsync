@@ -17,6 +17,8 @@ from views.search_page import SearchPage
 from views.logs_page import LogsPage
 from views.custom_page import CustomEditPage
 from views.json_page import JsonDataPage
+from views.delivery_setting_page import DeliverySettingPage
+from japanpost_backend.db_manager import DB_PATH
 
 
 class EmittingStream(QObject):
@@ -49,6 +51,7 @@ class MainWindow(QMainWindow):
             "データ更新 / 追加",
             "データ更新 / 削除",
             "更新履歴",
+            "配送設定",
             "インポート / エクスポート",
         ])
         self.menu.setFixedWidth(self.menu_width)
@@ -101,6 +104,7 @@ class MainWindow(QMainWindow):
         self.logs_page = LogsPage()
         self.custom_page = CustomEditPage()
         self.json_page = JsonDataPage()
+        self.delivery_page = DeliverySettingPage(DB_PATH)
         self._pending_zipcodes = []
 
         # ボタンに処理を接続
@@ -130,14 +134,15 @@ class MainWindow(QMainWindow):
         # ページ切替部
         self.stack = QStackedWidget()
         for page in [
-            self.search_page,
-            self.bulk_page,
-            self.clear_page,
-            self.add_page,
-            self.del_page,
-            self.logs_page,
-            self.json_page,
-            self.custom_page,
+            self.search_page,  # 0
+            self.bulk_page,    # 1
+            self.clear_page,   # 2
+            self.add_page,     # 3
+            self.del_page,     # 4
+            self.logs_page,    # 5
+            self.delivery_page,  # 6
+            self.json_page,    # 7
+            self.custom_page,  # 8 (hidden)
         ]:
             self.stack.addWidget(page)
 
