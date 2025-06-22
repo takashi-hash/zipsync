@@ -1,6 +1,8 @@
 from PySide6.QtWidgets import (
+    QApplication,
     QWidget, QVBoxLayout, QLabel, QHBoxLayout,
-    QLineEdit, QPushButton, QTextEdit, QFileDialog, QSizePolicy
+    QLineEdit, QPushButton, QTextEdit, QFileDialog, QSizePolicy,
+    QProgressDialog,
 )
 from PySide6.QtCore import Qt
 
@@ -39,6 +41,7 @@ class DeliverySettingPage(QWidget):
 
         file_row = QHBoxLayout()
         self.file_edit = QLineEdit()
+        self.file_edit.setMinimumWidth(200)
         self.browse_btn = QPushButton("Excel選択")
         self.browse_btn.setObjectName("secondaryButton")
         self.browse_btn.setFixedHeight(40)
@@ -47,6 +50,12 @@ class DeliverySettingPage(QWidget):
         self.run_btn.setObjectName("primaryButton")
         self.run_btn.setFixedHeight(40)
         self.run_btn.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        button_width = max(
+            self.browse_btn.sizeHint().width(),
+            self.run_btn.sizeHint().width(),
+        )
+        self.browse_btn.setFixedWidth(button_width)
+        self.run_btn.setFixedWidth(button_width)
         file_row.addWidget(self.file_edit, 1)
         file_row.addWidget(self.browse_btn)
         file_row.addWidget(self.run_btn)
@@ -63,7 +72,7 @@ class DeliverySettingPage(QWidget):
 
     # --- helpers ---
     def log(self, text: str) -> None:
-        self.output.append(text)
+        print(text)
 
     def choose_file(self) -> None:
         path, _ = QFileDialog.getOpenFileName(
@@ -77,6 +86,14 @@ class DeliverySettingPage(QWidget):
         if not excel_path:
             self.log("[ERROR] Excelファイルを指定してください")
             return
+        progress = QProgressDialog("処理中...", None, 0, 0, self)
+        progress.setWindowTitle("Please wait")
+        progress.setCancelButton(None)
+        progress.setWindowModality(Qt.WindowModal)
+        progress.setMinimumDuration(0)
+        progress.setRange(0, 0)
+        progress.show()
+        QApplication.processEvents()
         try:
             address_dict, entries_df, courses_df, variants_df = load_data_strict(
                 self.json_path, excel_path
@@ -90,3 +107,5 @@ class DeliverySettingPage(QWidget):
             self.log("[OK] JSONを更新しました")
         except Exception as e:  # pragma: no cover - runtime errors shown to user
             self.log(f"[ERROR] {e}")
+        finally:
+            progress.close()

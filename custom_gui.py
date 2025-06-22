@@ -10,7 +10,9 @@ from PySide6.QtWidgets import (
     QPushButton,
     QTextEdit,
     QFileDialog,
+    QProgressDialog,
 )
+from PySide6.QtCore import Qt
 
 from custom_builder import (
     load_data_strict,
@@ -35,8 +37,16 @@ class CustomInsertApp(QWidget):
 
         file_row = QHBoxLayout()
         self.file_edit = QLineEdit()
+        self.file_edit.setMinimumWidth(200)
         self.file_button = QPushButton("Excel選択")
         self.run_button = QPushButton("実行")
+        # unify button width
+        button_width = max(
+            self.file_button.sizeHint().width(),
+            self.run_button.sizeHint().width(),
+        )
+        self.file_button.setFixedWidth(button_width)
+        self.run_button.setFixedWidth(button_width)
         file_row.addWidget(QLabel("Excelファイル:"))
         file_row.addWidget(self.file_edit, 1)
         file_row.addWidget(self.file_button)
@@ -52,7 +62,7 @@ class CustomInsertApp(QWidget):
 
     # --- helpers ---
     def log(self, text: str) -> None:
-        self.output.append(text)
+        print(text)
 
     def choose_file(self) -> None:
         path, _ = QFileDialog.getOpenFileName(
@@ -66,6 +76,14 @@ class CustomInsertApp(QWidget):
         if not excel_path:
             self.log("[ERROR] Excelファイルを指定してください")
             return
+        progress = QProgressDialog("処理中...", None, 0, 0, self)
+        progress.setWindowTitle("Please wait")
+        progress.setCancelButton(None)
+        progress.setWindowModality(Qt.WindowModal)
+        progress.setMinimumDuration(0)
+        progress.setRange(0, 0)
+        progress.show()
+        QApplication.processEvents()
         try:
             address_dict, entries_df, courses_df, variants_df = load_data_strict(
                 self.json_path, excel_path
@@ -79,6 +97,8 @@ class CustomInsertApp(QWidget):
             self.log("[OK] JSONを更新しました")
         except Exception as e:  # pragma: no cover - runtime errors shown to user
             self.log(f"[ERROR] {e}")
+        finally:
+            progress.close()
 
 
 def main() -> None:
