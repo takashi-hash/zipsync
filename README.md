@@ -18,6 +18,7 @@ source venv/bin/activate
 ```bash
 pip install -r requirements.txt
 ```
+Excel 連携機能を利用するため `openpyxl` も依存関係に含まれています。
 
 ### 3. 初期データの配置
 以下の ZIP ファイルを日本郵便公式サイトからダウンロードし、`resources/` フォルダーに配置してください。
