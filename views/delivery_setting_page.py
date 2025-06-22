@@ -6,7 +6,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt
 
-from custom_builder import (
+from japanpost_backend.custom_builder import (
     load_data_strict,
     normalize_entries,
     normalize_course_codes,
