@@ -66,16 +66,17 @@ python main.py
 | サイドバー開閉 | 左メニューを隠してメイン画面を拡大 |
 | ログ欄開閉 | 出力ログを折りたたみ縦領域を拡大 |
 | 取込履歴表示 | 差分取込の履歴を一覧・復元・削除 |
-| 配送設定一括反映 | Excel からカスタム配送データを統合 |
+| 配送設定一括反映 | Excel から営業所コードやコースコードなどを読み込み配送設定を統合 |
 
-### CustomInsertApp について
-日本郵便の住所データに対して、営業所コードやコースコード、仕訳コードなど
-独自の配送設定を Excel ファイルから読み込み、JSON データへ統合するツールです。
 
-主な用途:
-- 営業所別の配送条件の管理（toB / toC）
-- 配送ルート (`course_codes`) の追加
-- 特定宛先への仕訳コード・配送先名の設定
+### 配送設定 Excel のフォーマット
+配送設定を取り込む Excel ファイルには次の 3 つのシートを用意します。
+
+1. **entries**: `zipcode`, `office_code`, `destination_name`, `shiwake_code`
+2. **course_codes**: `zipcode`, `course_code`
+3. **pickup_variants**: `zipcode`, `pickup_location`, `delivery_type`, `destination_name`, `shiwake_code`
+
+それぞれのシートに郵便番号を 7 桁で記載し、必要な配送情報を入力してください。
 
 ## 🎨 UI について
 - PySide6 ベースのシンプルな GUI
