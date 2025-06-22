@@ -42,6 +42,7 @@ class DeliverySettingPage(QWidget):
         file_row = QHBoxLayout()
         self.file_edit = QLineEdit()
         self.file_edit.setMinimumWidth(200)
+        self.file_edit.setMaximumWidth(400)
         self.browse_btn = QPushButton("Excel選択")
         self.browse_btn.setObjectName("secondaryButton")
         self.browse_btn.setFixedHeight(40)
@@ -56,14 +57,10 @@ class DeliverySettingPage(QWidget):
         )
         self.browse_btn.setFixedWidth(button_width)
         self.run_btn.setFixedWidth(button_width)
-        file_row.addWidget(self.file_edit, 1)
+        file_row.addWidget(self.file_edit)
         file_row.addWidget(self.browse_btn)
         file_row.addWidget(self.run_btn)
         layout.addLayout(file_row)
-
-        self.output = QTextEdit()
-        self.output.setReadOnly(True)
-        layout.addWidget(self.output)
 
         layout.addStretch()
 
