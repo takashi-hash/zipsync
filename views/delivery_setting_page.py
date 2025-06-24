@@ -52,7 +52,11 @@ class KeyListInput(QWidget):
             self.list_widget.addItem(item)
 
     def add_item(self):
-        self.list_widget.addItem("")
+        item = QListWidgetItem("")
+        item.setFlags(item.flags() | Qt.ItemIsEditable)
+        self.list_widget.addItem(item)
+        self.list_widget.setCurrentItem(item)
+        self.list_widget.editItem(item)
 
     def remove_selected(self):
         for item in self.list_widget.selectedItems():
@@ -130,7 +134,12 @@ class LoaderConfigBlock(QGroupBox):
         layout = QVBoxLayout(self)
         layout.setContentsMargins(8, 8, 8, 8)
         form_layout = QFormLayout()
-        form_layout.addRow("シート名", self.sheet_edit)
+        sheet_row_widget = QWidget()
+        sheet_row = QHBoxLayout(sheet_row_widget)
+        sheet_row.setContentsMargins(0, 0, 0, 0)
+        sheet_row.addWidget(self.sheet_edit)
+        sheet_row.addWidget(self.remove_btn)
+        form_layout.addRow("シート名", sheet_row_widget)
         form_layout.addRow("処理方法", self.method_combo)
 
         row_widget = QWidget()
@@ -152,8 +161,6 @@ class LoaderConfigBlock(QGroupBox):
         self.arg_stack.addWidget(self.grouped_args)
         self.arg_stack.addWidget(self.deep_args)
         layout.addWidget(self.arg_stack)
-
-        layout.addWidget(self.remove_btn)
 
         self.method_combo.currentTextChanged.connect(self.update_args_widget)
         self.remove_btn.clicked.connect(lambda: self.removed.emit(self))
@@ -210,12 +217,15 @@ class DeliverySettingPage(QWidget):
         file_row.addWidget(self.file_edit)
         file_row.addWidget(self.browse_btn)
         file_row.addWidget(self.run_btn)
+        file_row.addStretch()
         layout.addLayout(file_row)
 
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         scroll_content = QWidget()
-        self.block_layout = QVBoxLayout(scroll_content)
+        self.block_layout = QHBoxLayout(scroll_content)
         self.block_layout.setContentsMargins(0, 0, 0, 0)
         scroll.setWidget(scroll_content)
         layout.addWidget(scroll)
