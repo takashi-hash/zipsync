@@ -70,6 +70,18 @@ QLineEdit {
     border-radius: 4px;
 }
 
+QTextEdit {
+    background-color: #FFFFFF;
+    border: 1px solid #D0D7E2;
+    border-radius: 4px;
+}
+
+QListWidget {
+    background-color: #FFFFFF;
+    border: 1px solid #D0D7E2;
+    border-radius: 4px;
+}
+
 /* テーブルビュー */
 QTableView {
     background-color: #FFFFFF;
